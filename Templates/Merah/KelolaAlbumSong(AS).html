@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kelola Album & Song untuk Artist/Songwriter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <!-- CREATE ALBUM -->
+      <h2>Create Album</h2>
+      <form id="createAlbumForm">
+        <div class="mb-3">
+          <label for="albumTitle" class="form-label">Judul:</label>
+          <input type="text" class="form-control" id="albumTitle" required />
+        </div>
+        <div class="mb-3">
+          <label for="labelDropdown" class="form-label">Label:</label>
+          <select class="form-select" id="labelDropdown">
+            <!-- Dummy label options -->
+            <option value="label1">Label A</option>
+            <option value="label2">Label B</option>
+            <option value="label3">Label C</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+
+      <br>
+
+      <!-- LIST ALBUM -->
+      <h2>List Album</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Judul</th>
+            <th scope="col">Label</th>
+            <th scope="col">Jumlah Lagu</th>
+            <th scope="col">Total Durasi</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody id="albumList">
+          <!-- Dummy album list -->
+          <tr>
+            <td>Album 1</td>
+            <td>Label A</td>
+            <td>0</td>
+            <td>0 menit</td>
+            <td>
+              <button class="btn btn-primary">Lihat Daftar Lagu</button>
+              <button class="btn btn-primary">Tambah Lagu</button>
+              <button class="btn btn-danger">Hapus</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Album 2</td>
+            <td>Label B</td>
+            <td>2</td>
+            <td>4 menit</td>
+            <td>
+              <button class="btn btn-primary">Lihat Daftar Lagu</button>
+              <button class="btn btn-primary">Tambah Lagu</button>
+              <button class="btn btn-danger">Hapus</button>
+            </td>
+          </tr>
+          <!-- End of dummy album list -->
+        </tbody>
+      </table>
+
+      <br>
+
+      <!-- CREATE LAGU -->
+      <h2>Create Lagu</h2>
+      <form id="createSongForm">
+        <div class="mb-3">
+          <label for="songAlbum" class="form-label">Album:</label>
+          <input type="text" class="form-control" id="songAlbum" value="Album1" disabled />
+        </div>
+        <div class="mb-3">
+          <label for="songTitle" class="form-label">Judul:</label>
+          <input type="text" class="form-control" id="songTitle" required />
+        </div>
+        <div class="mb-3">
+          <label for="songArtist" class="form-label">Artist:</label>
+          <input type="text" class="form-control" id="songArtist" value="John Doe" disabled />
+        </div>
+        <div class="mb-3">
+          <label for="songwriters" class="form-label">Songwriter:</label>
+          <select multiple class="form-select" id="songwriters">
+            <!-- Dummy songwriter options -->
+            <option value="songwriter1">Songwriter A</option>
+            <option value="songwriter2">Songwriter B</option>
+            <option value="songwriter3">Songwriter C</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="genres" class="form-label">Genre:</label>
+          <select multiple class="form-select" id="genres">
+            <!-- Dummy genre options -->
+            <option value="genre1">Genre A</option>
+            <option value="genre2">Genre B</option>
+            <option value="genre3">Genre C</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="songDuration" class="form-label">Durasi:</label>
+          <input type="text" class="form-control" id="songDuration" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+
+      <br>
+
+      <!-- DAFTAR LAGU PADA ALBUM1 -->
+      <h2>Daftar Lagu pada Album1</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Judul</th>
+            <th scope="col">Durasi</th>
+            <th scope="col">Total Play</th>
+            <th scope="col">Total Download</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody id="songList">
+          <!-- Dummy song list -->
+          <tr>
+            <td>Lagu 1</td>
+            <td>2 menit</td>
+            <td>3</td>
+            <td>0</td>
+            <td>
+              <button class="btn btn-primary">Lihat Detail</button>
+              <button class="btn btn-danger">Hapus</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Lagu 2</td>
+            <td>3 menit</td>
+            <td>2</td>
+            <td>2</td>
+            <td>
+              <button class="btn btn-primary">Lihat Detail</button>
+              <button class="btn btn-danger">Hapus</button>
+            </td>
+          </tr>
+          <!-- End of dummy song list -->
+        </tbody>
+      </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
