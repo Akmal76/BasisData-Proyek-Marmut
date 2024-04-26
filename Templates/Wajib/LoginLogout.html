@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Login and Logout</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+    <style>
+        .hide {
+            display: none;
+        }
+        #loginForm {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div id="welcomeText" class="text-center mb-4">
+            <h1>🎵 Marmut - Kelas E - 5 🎵</h1>
+            <button class="btn btn-primary m-2" onclick="showLoginForm()">Login</button>
+            <br>
+            <button class="btn btn-primary m-2" onclick="showRegisterForm()">Register</button>
+        </div>
+        
+        </div>
+        
+        <!-- Login Form -->
+        <div id="loginForm" class="hide mb-4">
+            <h2>Form Login</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <div class="mb-3" id="loginError">
+                    <div class="alert alert-danger hide">Invalid email or password.</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Log In</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showLoginForm() {
+            document.getElementById('welcomeText').style.display = 'none';
+            document.getElementById('loginForm').classList.remove('hide');
+        }
+
+        function showRegisterForm() {
+            // Untuk routing ke halaman register
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            
+            // Simulasi validasi login
+            if (email === "user1@mail.com" && password === "password") {
+                // TODO:
+            } else {
+                // Tampilkan error message
+                document.getElementById('loginError').firstElementChild.classList.remove('hide');
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
