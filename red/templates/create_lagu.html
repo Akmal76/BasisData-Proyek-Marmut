@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+  <div class="container mt-5">
+    <h1 class="fw-bold">Buat Lagu</h1>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="album" class="form-label">Album:</label>
+        <input type="text" class="form-control" id="album" name="album" value="{{ selected_album }}" readonly>
+      </div>
+      <div class="mb-3">
+        <label for="judul" class="form-label">Judul:</label>
+        <input type="text" class="form-control" id="judul" name="judul" required>
+      </div>
+      {% if user_role == 'Artist' %}
+        <input type="hidden" id="artist" name="artist" value="{{ user_name }}">
+      {% else %}
+        <div class="mb-3">
+          <label for="artist" class="form-label">Artist:</label>
+          <select class="form-select" id="artist" name="artist" required>
+            <option value="" disabled selected>Select Artist</option>
+            {% for artist in artists %}
+              <option value="{{ artist }}">{{ artist }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+      {% if user_role == 'Songwriter' %}
+        <input type="hidden" id="songwriter" name="songwriter" value="{{ user_name }}">
+      {% else %}
+        <div class="mb-3">
+          <label for="songwriter" class="form-label">Songwriter:</label>
+          <select class="form-select" id="songwriter" name="songwriter" multiple required>
+            {% for songwriter in songwriters %}
+              <option value="{{ songwriter }}">{{ songwriter }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+      <div class="mb-3">
+        <label for="genre" class="form-label">Genre:</label>
+        <select class="form-select" id="genre" name="genre" multiple required>
+          {% for genre in genres %}
+            <option value="{{ genre }}">{{ genre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="durasi" class="form-label">Durasi:</label>
+        <input type="text" class="form-control" id="durasi" name="durasi" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+{% endblock %}
