@@ -11,7 +11,7 @@
           <h4 class="fw-bold">Login</h4>
         </div>
         <div class="card-body">
-          <form method="POST">
+          <form action="{% url 'main:login' %}" method="POST" >
             {% csrf_token %}
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
@@ -23,6 +23,14 @@
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
           </form>
+          <br>
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-danger" role="alert">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
         </div>
       </div>
     </div>

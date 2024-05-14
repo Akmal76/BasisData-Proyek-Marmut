@@ -1,6 +1,6 @@
 from django.shortcuts import render
-
 from django.http import HttpResponse
+from django.db import connection
 
 def show_create_album(request):
     if request.method == 'POST':
@@ -41,16 +41,23 @@ def show_create_lagu(request):
         return render(request, 'create_lagu.html', {'artists': artists, 'songwriters': songwriters, 'genres': genres, 'user_role': user_role, 'user_name': user_name, 'selected_album': selected_album})
 
 def list_album(request):
-    # Dummy
-    albums = [
-        {'judul': 'Album1', 'label': 'LabelA', 'jumlah_lagu': 0, 'total_durasi': '0 menit'},
-        {'judul': 'Album2', 'label': 'LabelB', 'jumlah_lagu': 2, 'total_durasi': '4 menit'},
-        # Add more albums as needed
-    ]
+    user_role = 'artist'
 
-    user_role = 'artist' 
+    if (user_role == 'artist' or user_role == 'songwriter'):
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT a.judul, l.nama, a.jumlah_lagu, a.total_durasi \
+                            FROM album AS a, label AS l \
+                            WHERE a.id_label = l.id;")
+            albums = cursor.fetchall()
+    elif (user_role == 'label'):
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT a.judul, a.jumlah_lagu, a.total_durasi \
+                            FROM album AS a, label AS l \
+                            WHERE a.id_label = l.id;")
+            albums = cursor.fetchall()
 
     return render(request, 'list_album.html', {'albums': albums, 'user_role': user_role})
+
 
 def list_song(request):
     #Dummy
