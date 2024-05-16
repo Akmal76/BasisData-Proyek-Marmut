@@ -14,16 +14,53 @@ def login(request):
         password = request.POST['password']
 
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM akun \
-                            WHERE email = %s AND password = %s", [email, password])
+            # SQL untuk mendapatkan data AKUN berdasarkan email dan password
+            cursor.execute("""SELECT * FROM akun
+                           WHERE email = %s AND password = %s
+                           """, [email, password])
             user = cursor.fetchall()
 
-            print(user)
+            # SQL untuk mendapatkan data LABEL berdasarkan email dan password
+            cursor.execute("""SELECT * FROM label
+                            WHERE email = %s AND password = %s
+                            """, [email, password])
+            label = cursor.fetchall()
 
-            if user != []:
-                return render(request, "dashboard.html")
+            if user == [] and label == []:
+                messages.error(request, "Email atau Password Anda salah")
+                return render(request, "login.html")
             
-    messages.error(request, "Email atau Password Anda salah")
+            else:
+                request.session['email'] = email
+
+                if user != []:
+                    # SQL untuk mendapatkan roles dari suatu AKUN
+                    cursor.execute("""
+                        SELECT STRING_AGG(role, ', ') AS roles
+                        FROM (
+                            SELECT 'nonpremium' AS role FROM nonpremium WHERE email = %s
+                            UNION ALL
+                            SELECT 'artist' AS role FROM artist WHERE email_akun = %s
+                            UNION ALL
+                            SELECT 'songwriter' AS role FROM songwriter WHERE email_akun = %s
+                            UNION ALL
+                            SELECT 'podcaster' AS role FROM podcaster WHERE email = %s
+                            UNION ALL
+                            SELECT 'premium' AS role FROM premium WHERE email = %s
+                        ) AS roles_table
+                    """, [email, email, email, email, email])
+                    roles = cursor.fetchone()
+                    request.session['roles'] = roles[0]
+                
+                else:
+                    request.session['roles'] = "label"
+
+                # print(user)
+                # print(request.session['email'])
+                # print(request.session['roles'])
+
+                return render(request, "dashboard.html")
+    
     return render(request, "login.html")
 
 def show_register(request):
