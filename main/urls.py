@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import show_main, show_dashboard, login, show_register
+from main.views import show_main, show_dashboard, login, show_register, logout
 
 app_name = 'main'
 
@@ -8,4 +8,5 @@ urlpatterns = [
     path('dashboard/', show_dashboard, name='show_dashboard'),
     path('login/', login, name='login'),
     path('register/', show_register, name='show_register'),
+    path('logout/', logout, name='logout'),
 ]

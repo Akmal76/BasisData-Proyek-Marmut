@@ -12,22 +12,19 @@ def show_main(request):
 
 def show_dashboard(request):
 
-    # Dashbord untuk PENGGUNA
-
-    if 'user' in request.session:
-        user = json.loads(request.session['user'])[0]
-        roles = request.session['roles']
-        print(roles)
-        return render(request, "dashboard.html", {'user': user, 'roles': roles})
-    
     # Dashboard untuk LABEL
-
-    elif 'label' in request.session:
-        label = json.loads(request.session['label'])
+    if "Label" in request.session['roles']:
+        label = json.loads(request.session['label'])[0]
         roles = request.session['roles']
         return render(request, "dashboard.html", {'label': label, 'roles': roles})
-
-    return render(request, "dashboard.html")
+    
+    # Dashbord untuk PENGGUNA
+    else:
+        user = json.loads(request.session['user'])[0]
+        roles = request.session['roles']
+        # print(roles)
+        return render(request, "dashboard.html", {'user': user, 'roles': roles})
+    
 
 def login(request):
     if (request.method == "POST"):
@@ -102,7 +99,7 @@ def login(request):
                     request.session['user'] = json.dumps(user_data)
                 
                 else:
-                    request.session['roles'] = 'label'
+                    request.session['roles'] = 'Label'
 
                     # Simpan data label ke session
                     label_column = ['id', 'nama', 'email', 'password', 'kontak', 'id_pemilik_hak_cipta']
@@ -121,3 +118,8 @@ def login(request):
 
 def show_register(request):
     return render(request, "register.html")
+
+def logout(request):
+    request.session.flush()
+    request.session['roles'] = []
+    return show_main(request)
