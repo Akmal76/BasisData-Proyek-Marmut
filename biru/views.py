@@ -93,7 +93,7 @@ def delete_podcast(request, podcast_id):
 
         return redirect('list_podcasts')
 
-def list_podcasts(request):
+def podcast(request):
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT K.id, K.judul, COUNT(E.id), SUM(E.durasi)
@@ -103,7 +103,7 @@ def list_podcasts(request):
         """)
         podcasts = cursor.fetchall()
 
-    return render(request, 'podcast.html', {'podcasts': podcasts})
+    return render(request, 'podcast.html', {'podcast': podcast})
 
 def create_episode(request, podcast_id):
     if request.method == 'POST':
@@ -131,7 +131,7 @@ def delete_episode(request, episode_id):
 
         return redirect('list_episodes')
 
-def list_episodes(request, podcast_id):
+def episode(request, podcast_id):
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT E.judul, E.deskripsi, E.durasi, E.tanggal_rilis
@@ -141,4 +141,8 @@ def list_episodes(request, podcast_id):
         """, [podcast_id])
         episodes = cursor.fetchall()
 
-    return render(request, 'episode.html', {'episodes': episodes})
+    return render(request, 'episode.html', {'episode': episode})
+
+def show_dashboard(request):
+    # Your view logic here
+    return render(request, 'dashboard.html')
