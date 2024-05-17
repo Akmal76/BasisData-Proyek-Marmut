@@ -1,11 +1,12 @@
 from django.shortcuts import render
-from django.db import connection
+from django.db import connection, IntegrityError, InternalError
 from django.contrib import messages
 
 from datetime import date
 from uuid import UUID
-
+import uuid
 import json
+import random
 
 def show_main(request):
     return render(request, "main.html")
@@ -22,7 +23,7 @@ def show_dashboard(request):
     else:
         user = json.loads(request.session['user'])[0]
         roles = request.session['roles']
-        # print(roles)
+
         return render(request, "dashboard.html", {'user': user, 'roles': roles})
     
 
@@ -112,20 +113,80 @@ def login(request):
                         label_data.append(row_dict)
                     request.session['label'] = json.dumps(label_data)
 
+                cursor.execute("""
+                                CALL login_and_update_subscription(%s);
+                               """, [email])
+
                 return show_dashboard(request)
     
     return render(request, "login.html")
 
-def show_register(request):
+def register(request):
+    if (request.method == "POST"):
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        nama = request.POST.get('nama')
+        gender = request.POST.get('gender')
+        tempat_lahir = request.POST.get('tempat_lahir')
+        tanggal_lahir = request.POST.get('tanggal_lahir')
+        kota_asal = request.POST.get('kota_asal')
+        role = request.POST.getlist('role')
+        kontak = request.POST.get('kontak')
+
+        with connection.cursor() as cursor:
+            try:
+                id_pemilik_hak_cipta = uuid.uuid4()
+
+                # Register untuk AKUN
+                if (kontak == None):
+                    cursor.execute("""
+                                INSERT INTO akun (email, password, nama, gender, tempat_lahir, tanggal_lahir, kota_asal)
+                                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                                """, [email, password, nama, gender, tempat_lahir, tanggal_lahir, kota_asal])
+
+                    if 'Artist' or 'Songwriter' in role:
+                        cursor.execute("""
+                                        INSERT INTO pemilik_hak_cipta (id, rate_royalti)
+                                        VALUES (%s, %s)
+                                    """, [id_pemilik_hak_cipta, random.randint(1, 100)])
+
+                    if 'Artist' in role:
+                        cursor.execute("""
+                                        INSERT INTO artist (id, email_akun, id_pemilik_hak_cipta)
+                                        VALUES (%s, %s, %s)
+                                    """, [uuid.uuid4(), email, id_pemilik_hak_cipta])
+                        
+                    if 'Songwriter' in role:
+                        cursor.execute("""
+                                    INSERT INTO songwriter (id, email_akun, id_pemilik_hak_cipta)
+                                    VALUES (%s, %s, %s)
+                                    """, [uuid.uuid4(), email, id_pemilik_hak_cipta])
+                    
+                    if 'Podcaster' in role:
+                        cursor.execute("""
+                                        INSERT INTO podcaster (email)
+                                        VALUES (%s)
+                                    """, [email])
+
+                # Register untuk LABEL
+                else:
+                    cursor.execute("""
+                                INSERT INTO pemilik_hak_cipta (id, rate_royalti)
+                                VALUES (%s, %s)
+                                """, [id_pemilik_hak_cipta, random.randint(1, 100)])
+
+                    cursor.execute("""
+                                INSERT INTO label (id, nama, email, password, kontak, id_pemilik_hak_cipta)
+                                VALUES (%s, %s, %s, %s, %s, %s)
+                                """, [uuid.uuid4(), nama, email, password, kontak, id_pemilik_hak_cipta])
+            except InternalError as e:
+                # Concate message error stop at "CONTEXT"
+                error_message = str(e).split("CONTEXT")[0]
+                return render(request, "register.html", {'error_message': error_message})
+                
     return render(request, "register.html")
 
 def logout(request):
     request.session.flush()
     request.session['roles'] = []
     return show_main(request)
-
-def register_pengguna(request):
-    if (request.method == "POST"):
-        email = request.POST['email']
-        password = request.POST['password']
-        nama = request.POST['nama']
