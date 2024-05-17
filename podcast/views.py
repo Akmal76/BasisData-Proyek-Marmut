@@ -1,5 +1,6 @@
 # views.py
 import datetime
+from django.db import connection
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import Podcast, Episode
 from .forms import PodcastForm, EpisodeForm
@@ -33,17 +34,17 @@ def createepisode(request, podcast_id):
             podcast = Podcast.objects.get(pk=podcast_id)
             podcast.total_duration += form.cleaned_data['duration']
             podcast.save()
-            return redirect('view_episodes', podcast_id=podcast_id)
+            return redirect('episode', podcast_id=podcast_id)
     else:
         form = EpisodeForm(initial={'podcast': podcast_id})
-    return render(request, 'add_episode.html', {'form': form})
+    return render(request, 'createepisode.html', {'form': form})
 
 def createpodcast(request):
     if request.method == 'POST':
         form = PodcastForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('list_podcasts')
+            return redirect('podcast')
     else:
         form = PodcastForm()
     
@@ -52,16 +53,51 @@ def createpodcast(request):
     return render(request, 'createpodcast.html', {'form': form, 'dummy_genres': dummy_genres})
 
 
-def podcastdetail(request, podcast_id):
-    podcast_data = {
-        'judul': 'Podcast1',
-        'durasi': '8 hours 20 minutes',
-    }
+def delete_podcast(request, podcast_id):
+    if request.method == 'POST':
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                DELETE FROM marmut.KONTEN
+                WHERE id = %s
+            """, [podcast_id])
 
-    episode_data = [
-        {'title': 'Episode 1', 'description': 'This is the first episode', 'duration': '59 minutes', 'date': '2024-03-18'},
-        {'title': 'Episode 2', 'description': 'This is the second episode', 'duration': '1 hour 2 minutes', 'date': '2024-03-25'}
-    ]
+        return redirect('podcast')
+    
+def delete_episode(request, episode_id):
+    if request.method == 'POST':
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                DELETE FROM marmut.EPISODE
+                WHERE id = %s
+            """, [episode_id])
 
-    return render(request, 'podcastdetail.html', {'episodes': episode_data})
+        return redirect('episode')
+    
+def get_podcast_details(request, podcast_id):
+    with connection.cursor() as cursor:
+        # Fetch podcast details
+        cursor.execute("""
+            SELECT K.judul, array_agg(G.genre), A.nama, K.durasi, K.tanggal_rilis, K.tahun
+            FROM marmut.KONTEN K
+            JOIN marmut.PODCAST P ON K.id = P.id_konten
+            JOIN marmut.PODCASTER Po ON P.email_podcaster = Po.email
+            JOIN marmut.AKUN A ON Po.email = A.email
+            JOIN marmut.GENRE G ON K.id = G.id_konten
+            WHERE K.id = %s
+            GROUP BY K.judul, A.nama, K.durasi, K.tanggal_rilis, K.tahun
+        """, [str(podcast_id)])
 
+        podcast = cursor.fetchone()
+        print(podcast)
+
+        cursor.execute("""
+            SELECT E.judul, E.deskripsi, E.durasi, E.tanggal_rilis
+            FROM marmut.EPISODE E
+            WHERE E.id_konten_podcast = %s
+            ORDER BY E.tanggal_rilis DESC
+        """, [str(podcast_id)])
+
+        episodes = cursor.fetchall()
+        print(episodes)
+
+    return render(request, 'podcastdetail.html', {'podcast': podcast, 'episode': episode})
