@@ -47,10 +47,9 @@ def createpodcast(request):
     else:
         form = PodcastForm()
     
-    # Define dummy genres
-    dummy_genres = ['Genre 1', 'Genre 2', 'Genre 3']  # Add your dummy genres here
+    dummy_genres = ['Genre 1', 'Genre 2', 'Genre 3']  
 
-    return render(request, 'create_podcast.html', {'form': form, 'dummy_genres': dummy_genres})
+    return render(request, 'createpodcast.html', {'form': form, 'dummy_genres': dummy_genres})
 
 
 def podcastdetail(request, podcast_id):
@@ -64,5 +63,5 @@ def podcastdetail(request, podcast_id):
         {'title': 'Episode 2', 'description': 'This is the second episode', 'duration': '1 hour 2 minutes', 'date': '2024-03-25'}
     ]
 
-    return render(request, 'play_podcast.html', {'episodes': episode_data})
+    return render(request, 'podcastdetail.html', {'episodes': episode_data})
 
