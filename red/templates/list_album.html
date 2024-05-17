@@ -6,7 +6,7 @@
 {% endblock %}
 {% block content %}
   <div class="container mt-5">
-    {% if user_role == 'artist' or user_role == 'songwriter' %}
+    {% if 'Artist' in user_role or 'Songwriter' in user_role %}
       <div class="d-flex justify-content-between align-items-center">
         <h1 class="fw-bold">Daftar Album</h1>
         <a href="/red/create_album" class="btn btn-success"><i class="bi bi-plus"></i></a>
@@ -24,14 +24,14 @@
         <tbody>
           {% for album in albums %}
             <tr>
-              <td>{{ album.0 }}</td>
               <td>{{ album.1 }}</td>
               <td>{{ album.2 }}</td>
               <td>{{ album.3 }}</td>
+              <td>{{ album.4 }}</td>
               <td>
-                <a href="/red/list_song" class="btn btn-primary btn-sm">Lihat Daftar Lagu</a>
-                <a href="/red/create_lagu" class="btn btn-success btn-sm">Tambah Lagu</a>
-                <a href="" class="btn btn-danger btn-sm">Hapus</a>
+                <a href="/red/list_song/{{ album.0 }}" class="btn btn-primary btn-sm">Lihat Daftar Lagu</a>
+                <a href="/red/create_lagu/{{ album.0 }}" class="btn btn-success btn-sm">Tambah Lagu</a>
+                <a href="/red/delete_album/{{ album.0 }}" class="btn btn-danger btn-sm">Hapus</a>
               </td>
             </tr>
           {% endfor %}
@@ -51,12 +51,12 @@
         <tbody>
           {% for album in albums %}
             <tr>
-              <td>{{ album.0 }}</td>
               <td>{{ album.1 }}</td>
               <td>{{ album.2 }}</td>
+              <td>{{ album.3 }}</td>
               <td>
-                <a href="/red/list_song" class="btn btn-primary btn-sm">Lihat Daftar Lagu</a>
-                <a href="" class="btn btn-danger btn-sm">Hapus</a>
+                <a href="/red/list_song/{{ album.0 }}" class="btn btn-primary btn-sm">Lihat Daftar Lagu</a>
+                <a href="/red/delete_album/{{ album.0 }}" class="btn btn-danger btn-sm">Hapus</a>
               </td>
             </tr>
           {% endfor %}

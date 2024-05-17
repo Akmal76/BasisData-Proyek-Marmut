@@ -99,7 +99,7 @@ def login(request):
                     request.session['user'] = json.dumps(user_data)
                 
                 else:
-                    request.session['roles'] = 'Label'
+                    request.session['roles'] = ['Label']
 
                     # Simpan data label ke session
                     label_column = ['id', 'nama', 'email', 'password', 'kontak', 'id_pemilik_hak_cipta']
@@ -123,3 +123,9 @@ def logout(request):
     request.session.flush()
     request.session['roles'] = []
     return show_main(request)
+
+def register_pengguna(request):
+    if (request.method == "POST"):
+        email = request.POST['email']
+        password = request.POST['password']
+        nama = request.POST['nama']
