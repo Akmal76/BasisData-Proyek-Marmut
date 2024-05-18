@@ -21,5 +21,5 @@ from main.views import show_dashboard
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', show_dashboard, name='show_dashboard'),
-    path('biru/', include('biru.urls')),
+    path('', include('biru.urls')),
 ]

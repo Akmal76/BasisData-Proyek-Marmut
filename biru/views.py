@@ -146,3 +146,6 @@ def episode(request, podcast_id):
 def show_dashboard(request):
     # Your view logic here
     return render(request, 'dashboard.html')
+
+def chart_view(request):
+    return render(request, 'chart.html')
