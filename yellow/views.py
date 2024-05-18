@@ -1,80 +1,108 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.utils import timezone
 from django.db import connection
-
-
-# Dummy data for demonstration
-PAKET_DATA = {
-    '1_bulan': {'jenis': '1 Bulan', 'harga': 54900},
-    '3_bulan': {'jenis': '3 Bulan', 'harga': 149700},
-    '6_bulan': {'jenis': '6 Bulan', 'harga': 299400},
-    '1_tahun': {'jenis': '1 Tahun', 'harga': 549900}
-}
+from uuid import uuid4
+from django.http import JsonResponse
+from django.db.utils import DatabaseError
+from datetime import datetime, timedelta
+from .utils import *
+from dateutil.relativedelta import relativedelta
 
 TRANSACTION_DATA = []
 
-def get_paket_data():
-    paket_data = {}
+def langganan_paket(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT jenis, harga FROM paket")
-        rows = cursor.fetchall()
+        rows = parse(cursor)
         for row in rows:
-            key = row[0].replace(' ', '_').lower()
-            paket_data[key] = {'jenis': row[0], 'harga': row[1]}
-    return paket_data
+            row['harga'] = f"Rp{row['harga']:,.0f}".replace(",", ".")
+    context = {
 
-def langganan_paket(request):
-    user = request.session.get('user')
-    # if not user:
-    #     return redirect('main:login')
+        'paket' : rows,
+    }
 
-    paket_data = get_paket_data()
-    
-    if request.method == 'POST':
-        jenis_paket_key = request.POST.get('jenis_paket')
-        request.session['jenis_paket_key'] = jenis_paket_key
-        return redirect('pembayaran')
-    
-    return render(request, 'langganan_paket.html', {'paket_data': paket_data, 'user': user})
+    return render(request, 'langganan_paket.html', context)
 
-def pembayaran(request):
-    user = request.session.get('user')
-    if not user:
-        return redirect('main:login')
+# def langganan_paket(request):
+#     user = request.session.get('user')
+#     # if not user:
+#     #     return redirect('main:login')
 
-    jenis_paket_key = request.session.get('jenis_paket_key')
-    if not jenis_paket_key:
-        return redirect('langganan_paket')
+#     paket_data = get_paket_data()
+#     return render(request, 'langganan_paket.html', {'paket_data': paket_data, 'user': user})
 
-    paket_data = get_paket_data()
-    paket = paket_data[jenis_paket_key]
+def add_months(start_date, months):
+    return start_date + relativedelta(months=months)
 
-    if request.method == 'POST':
-        metode_bayar = request.POST.get('metode_bayar')
-        timestamp_dimulai = timezone.now()
-        timestamp_berakhir = timestamp_dimulai + timezone.timedelta(days=30 * int(jenis_paket_key.split('_')[0]))
-        transaction = {
-            'id': len(TRANSACTION_DATA) + 1,
-            'jenis_paket': paket['jenis'],
-            'email': user['email'],
-            'timestamp_dimulai': timestamp_dimulai,
-            'timestamp_berakhir': timestamp_berakhir,
-            'metode_bayar': metode_bayar,
-            'nominal': paket['harga']
-        }
-        TRANSACTION_DATA.append(transaction)
-        return redirect('riwayat_transaksi')
-    
-    return render(request, 'pembayaran.html', {'paket': paket, 'user': user})
+def pembayaran(request, jenis):
+    with connection.cursor() as cursor:
+        get_paket = f"""
+            SELECT * FROM PAKET WHERE jenis = '{jenis}';
+        """
+        cursor.execute(get_paket)
+        jenis_paket = parse(cursor)
+
+    for row in jenis_paket:
+        row['harga'] = f"Rp{row['harga']:,.0f}".replace(",", ".")
+
+    metode_bayar = ['Transfer Bank', 'Kartu Kredit', 'E-Wallet']
+
+    context = {
+        'paket' : jenis_paket,
+        'metode_bayar' : metode_bayar
+    }
+    return render(request, 'pembayaran.html', context)
 
 def riwayat_transaksi(request):
-    user = request.session.get('user')
-    if not user:
-        return redirect('main:login')
+    with connection.cursor() as cursor:
+        query_riwayat = f"""
+        SELECT * FROM TRANSACTION WHERE email = '{request.session['email']}'
+        """
+        cursor.execute(query_riwayat)
+        riwayat = parse(cursor)
+    # transactions = sorted(TRANSACTION_DATA, key=lambda x: x['timestamp_dimulai'], reverse=True)
+    context = {
+        'riwayat': riwayat,
+    }
+    return render(request, 'riwayat_transaksi.html', context)
 
-    user_transactions = [t for t in TRANSACTION_DATA if t['email'] == user['email']]
-    user_transactions.sort(key=lambda x: x['timestamp_dimulai'], reverse=True)
-    return render(request, 'riwayat_transaksi.html', {'transactions': user_transactions, 'user': user})
+def pembayaran_paket(request):
+    if request.method == "POST":
+        # user = context_user_getter(request)
+        jenis_paket = request.POST.get('jenis')
+        metode_bayar = request.POST.get('metode_bayar')
+
+        cursor = connection.cursor()
+
+        id_transaksi = str(uuid4())
+        timestamp_dimulai = timezone.now()
+        nominal = 0
+        if jenis_paket == '1 BULAN':
+                timestamp_berakhir = add_months(timestamp_dimulai, 1)
+                cursor.execute("""SELECT harga FROM PAKET WHERE jenis = '1 BULAN'""")
+                nominal = cursor.fetchone()[0]
+        elif jenis_paket == '3 BULAN':
+                timestamp_berakhir = add_months(timestamp_dimulai, 3)
+                cursor.execute("""SELECT harga FROM paket WHERE jenis = '3 BULAN';""")
+                nominal = cursor.fetchone()[0]
+        elif jenis_paket == '6 BULAN':
+                timestamp_berakhir = add_months(timestamp_dimulai, 6)
+                cursor.execute("""SELECT harga FROM PAKET WHERE jenis = '6 BULAN';""")
+                nominal = cursor.fetchone()[0]
+        else:
+                timestamp_berakhir = add_months(timestamp_dimulai, 12)
+                cursor.execute("""SELECT harga FROM PAKET WHERE jenis = '1 TAHUN';""")
+                nominal = cursor.fetchone()[0]
+            
+        # print("Start date:", timestamp_dimulai)
+        # print("End date:", timestamp_berakhir)
+        # print("Jenis paket:", jenis_paket)
+        # print("Nominal:", nominal)
+
+        cursor.execute(create_transaction(id_transaksi, jenis_paket, request.session['email'], timestamp_dimulai, timestamp_berakhir, metode_bayar, nominal))
+        connection.commit()
+        request.session['is_premium'] = True
+    return JsonResponse({'success': True, 'message': 'Pembelian paket berhasil'})
 
 # FITUR SEARCH
 
@@ -85,69 +113,115 @@ SONGS = [
     {"title": "90s Love Songs", "creator": "User1", "type": "USER PLAYLIST"},
 ]
 
-# Dummy data for demonstration
-# SONGS = [
-#     {"type": "SONG", "title": "Love is in the air", "by": "Artist1"},
-#     {"type": "SONG", "title": "What is love", "by": "Artist2"},
-#     {"type": "PODCAST", "title": "Love is Blind Pod", "by": "Podcaster1"},
-#     {"type": "USER PLAYLIST", "title": "90s Love Songs", "by": "User1"},
-# ]
-
-# def search(request):
-#     query = request.GET.get('query', '').lower()
-#     results = []
-
-#     if query:
-#         for song in SONGS:
-#             if query in song["title"].lower():
-#                 results.append(song)
-
-#     return render(request, 'search.html', {'query': query, 'results': results})
-
-
 def search(request):
     query = request.GET.get('query', '')
-    results = []
 
-    if query:
-        with connection.cursor() as cursor:
-            sql_query = """
-                SELECT SONG AS type, s.judul AS title, a.nama AS by 
-                FROM song s
-                JOIN artist a ON s.id_artist = a.id
-                WHERE LOWER(s.judul) LIKE %s
-                UNION
-                SELECT 'PODCAST' AS type, p.judul AS title, pod.nama AS by 
-                FROM podcast p
-                JOIN podcaster pod ON p.email_podcaster = pod.email
-                WHERE LOWER(p.judul) LIKE %s
-                UNION
-                SELECT USER_PLAYLIST AS type, up.judul AS title, up.email_pembuat AS by 
-                FROM user_playlist up
-                WHERE LOWER(up.judul) LIKE %s
+    with connection.cursor() as cursor:
+        sql_query_song = f"""SELECT K.judul, A.nama, K.id FROM SONG S, ARTIST AR, AKUN A, KONTEN K 
+            WHERE S.id_konten = K.id 
+            AND S.id_artist = AR.id 
+            AND AR.email_akun = A.email 
+            AND K.judul ILIKE '%{query}%';
             """
-            cursor.execute(sql_query, ['%' + query.lower() + '%', '%' + query.lower() + '%', '%' + query.lower() + '%'])
-            results = cursor.fetchall()
+        cursor.execute(sql_query_song)
+        song_result = parse(cursor)
 
-    return render(request, 'search.html', {'query': query, 'results': results})
+        sql_query_podcast = f"""
+            SELECT K.judul, A.nama, K.id FROM PODCAST P, AKUN A, KONTEN K 
+            WHERE P.id_konten = K.id 
+            AND P.email_podcaster = A.email
+            and K.judul ILIKE '%{query}%';
+            """
+        cursor.execute(sql_query_podcast)
+        podcast_result = parse(cursor)
+
+        sql_query_playlist=f"""
+            SELECT UP.judul, A.nama, UP.id_playlist FROM USER_PLAYLIST UP, AKUN A
+            WHERE UP.email_pembuat = A.email and UP.judul ILIKE '%{query}%';
+            """
+        cursor.execute(sql_query_playlist)
+        user_playlist_result = parse(cursor)
+    
+    context = {
+        'query' : query,
+        'song_result' : song_result,
+        'podcast_result' : podcast_result,
+        'user_playlist_result' : user_playlist_result
+    }
+
+    return render(request, 'search.html', context)
+
 
 #FITUR DOWNLOAD
 def downloaded_songs(request):
-    email = request.user.email  # Replace with actual user email
-    songs = []
-
     with connection.cursor() as cursor:
-        sql_query = """
-            SELECT s.title, a.nama AS artist, d.timestamp_download
-            FROM downloaded_songs ds
-            JOIN songs s ON ds.id_song = s.id_konten
-            JOIN artist a ON s.id_artist = a.id
-            WHERE ds.email_downloader = %s
+        email_download = request.session['email']
+        sql_query_download = f"""
+            SELECT K.judul, A.nama, K.id, DS.email_downloader, DS.email_downloader FROM DOWNLOADED_SONG DS, SONG S, ARTIST AR, KONTEN K, AKUN A 
+            WHERE DS.email_downloader = '{email_download}'
+            AND DS.id_song = S.id_konten 
+            AND S.id_konten = K.id 
+            AND S.id_artist = AR.id 
+            AND AR.email_akun = A.email;
         """
-        cursor.execute(sql_query, [email])
-        songs = cursor.fetchall()
+        cursor.execute(sql_query_download)
+        downloaded_songs = parse(cursor)
+        context = {
+            'downloaded_songs' : downloaded_songs
+        }
 
-    return render(request, 'downloaded_songs.html', {'songs': songs})
+    return render(request, 'downloaded_songs.html', context)
+
+def delete_song(request, id_song, email_downloader):
+    if request.method == 'POST':
+        with connection.cursor() as cursor:
+            cursor.execute(f"""DELETE FROM DOWNLOADED_SONG WHERE id_song = '{id_song}' AND email_downloader = '{email_downloader}'""")
+            connection.commit()
+            cursor.execute(get_song_name(id_song))
+            delete_song = parse(cursor)
+        return JsonResponse({'success': True, 'message': f'Berhasil menghapus lagu dengan judul "{delete_song[0].get("judul")}" dari daftar unduhan!'})
+
+def get_song_name(id_song):
+    return f"""SELECT judul FROM KONTEN WHERE id = '{id_song}';"""
 
 
 
+
+
+
+def get_all_paket():
+    return """SELECT * FROM PAKET;"""
+
+def get_paket(jenis):
+    return f"""SELECT * FROM PAKET WHERE jenis = '{jenis}';"""
+
+def create_transaction(id_transaksi, jenis_paket, email, timestamp_dimulai, timestamp_berakhir, metode_bayar, nominal):
+    return f"""INSERT INTO TRANSACTION VALUES 
+    ('{id_transaksi}','{jenis_paket}','{email}','{timestamp_dimulai}','{timestamp_berakhir}','{metode_bayar}',{nominal});"""
+
+def get_riwayat_transaksi(email):
+    return f"""SELECT * FROM TRANSACTION WHERE email = '{email}';"""
+
+def add_one_month():
+    return """SELECT NOW() + INTERVAL '1 month'"""
+
+def add_three_month():
+    return """SELECT NOW() + INTERVAL '3 months'"""
+
+def add_six_month():
+    return """SELECT NOW() + INTERVAL '6 months'"""
+
+def add_one_year():
+    return """SELECT NOW() + INTERVAL '1 year'"""
+
+def get_harga_one_month():
+    return """SELECT harga FROM PAKET WHERE jenis = '1 BULAN';"""
+
+def get_harga_three_month():
+    return """SELECT harga FROM PAKET WHERE jenis = '3 BULAN';"""
+
+def get_harga_six_month():
+    return """SELECT harga FROM PAKET WHERE jenis = '6 BULAN';"""
+
+def get_harga_one_year():
+    return """SELECT harga FROM PAKET WHERE jenis = '1 TAHUN';"""

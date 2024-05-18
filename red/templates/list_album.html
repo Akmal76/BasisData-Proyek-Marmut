@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+  <div class="container mt-5">
+    {% if user_role == 'artist' or user_role == 'songwriter' %}
+      <div class="d-flex justify-content-between align-items-center">
+        <h1 class="fw-bold">Daftar Album</h1>
+        <a href="/red/create_album" class="btn btn-success"><i class="bi bi-plus"></i></a>
+      </div>
+      <table class="table mt-3">
+        <thead>
+          <tr>
+            <th scope="col">Judul</th>
+            <th scope="col">Label</th>
+            <th scope="col">Jumlah Lagu</th>
+            <th scope="col">Total Durasi</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for album in albums %}
+            <tr>
+              <td>{{ album.0 }}</td>
+              <td>{{ album.1 }}</td>
+              <td>{{ album.2 }}</td>
+              <td>{{ album.3 }}</td>
+              <td>
+                <a href="/red/list_song" class="btn btn-primary btn-sm">Lihat Daftar Lagu</a>
+                <a href="/red/create_lagu" class="btn btn-success btn-sm">Tambah Lagu</a>
+                <a href="" class="btn btn-danger btn-sm">Hapus</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <h1 class="fw-bold">Daftar Album</h1>
+      <table class="table mt-3">
+        <thead>
+          <tr>
+            <th scope="col">Judul</th>
+            <th scope="col">Jumlah Lagu</th>
+            <th scope="col">Total Durasi</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for album in albums %}
+            <tr>
+              <td>{{ album.0 }}</td>
+              <td>{{ album.1 }}</td>
+              <td>{{ album.2 }}</td>
+              <td>
+                <a href="/red/list_song" class="btn btn-primary btn-sm">Lihat Daftar Lagu</a>
+                <a href="" class="btn btn-danger btn-sm">Hapus</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+<div class="centered-container">
+    <div class="card">
+        <table class="" style="margin-bottom: 5%;">
+            <thead>
+                <tr>
+                  <th scope="col" style="text-align: left;">LANGGANAN PAKET</th>
+                  <th scope="col" style="text-align: right; width: 30%;"><a class="btn" href="{% url 'yellow:riwayat_transaksi' %}">See History</a></th>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-striped-columns table-bordered" style="border: 2px solid black;">
+            <thead>
+                <tr>
+                  <th scope="col">Jenis</th>
+                  <th scope="col">Harga</th>
+                  <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tbody>
+                    {% for paket in paket %}
+                    <tr>
+                        <td>{{ paket.jenis }}</td>
+                        <td>{{ paket.harga }}</td>
+                        <td><a class="btn" style="width: 60%; margin-left: 20%;" href="{% url 'yellow:pembayaran' paket.jenis %}">Subscribe</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                
+            </tbody>
+          </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('langgananPaketForm').addEventListener('submit', function(event) {
+        var selectedOption = document.getElementById('jenis_paket').selectedOptions[0];
+        var harga = selectedOption.getAttribute('data-harga');
+        var jenis = selectedOption.getAttribute('data-jenis');
+
+        document.getElementById('harga_paket').value = harga;
+        document.getElementById('jenis_paket_text').value = jenis;
+    });
+</script>
+{% endblock %}

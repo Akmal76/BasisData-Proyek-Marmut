@@ -1,91 +1,131 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-        />
-        {% block meta %}
-        {% endblock meta %}
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+J4jsl5c9zdLKaUk5Ae5f5b1bw6AUn5f5v8FZJoMxm6f5cH1" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-        <style>
-            .nav-item:not(:last-child) {
-              margin-right: 15px;
-            }
-          </style>
-    </head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block meta %}
 
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-              <a class="navbar-brand" href="#">
-                <i class="bi bi-music-note-list"></i>
-                Marmut
-              </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-              <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto" id="navbarLinks"></ul>
-              </div>
-            </div>
-          </nav>
+    {% endblock %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+J4jsl5c9zdLKaUk5Ae5f5b1bw6AUn5f5v8FZJoMxm6f5cH1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <style>
+      .nav-item:not(:last-child) {
+        margin-right: 15px;
+      }
+      .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/">
+          <i class="bi bi-music-note-list"></i>
+          Marmut
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto" id="navbarLinks"></ul>
+        </div>
+      </div>
+    </nav>
+
+    <br>
+    <br>
+    <br>
+
+    <script>
+      const isLoggedIn = {% if request.session.email %}true{% else %}false{% endif %};
+      const isPremium = ({{ request.session.user|default_if_none:""|safe }}[0].status_langganan === "Premium");
+      const role = {{ request.session.roles|default_if_none:""|safe }};
       
-          <script>
-            // Temporary User Data
-            const user = {
-              isLoggedIn: true,
-              role: 'Label',
-              isPremium: false
-            }
-            
-            const navbarLinks = document.getElementById('navbarLinks')
-            
-            function setupNavbar() {
-              let links = []
-            
-              if (user.isLoggedIn) {
-                links.push('<li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>')
-                links.push('<li class="nav-item"><a class="nav-link" href="#">Chart</a></li>')
-                links.push('<li class="nav-item"><a class="nav-link" href="#">Search Bar</a></li>')
-                links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Playlist</a></li>')
-                
-                if (!user.isPremium) {
-                  links.push('<li class="nav-item"><a class="nav-link" href="#">Langganan Paket</a></li>')
-                }
-                if (user.role === 'Podcaster') {
-                  links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Podcast</a></li>')
-                }
-                if (user.role === 'Artist' || user.role === 'Songwriter') {
-                  links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Album & Songs</a></li>')
-                }
-                if (user.role === 'Label') {
-                  links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Album</a></li>')
-                }
-                if (user.role === 'Artist' || user.role === 'Songwriter' || user.role === 'Label') {
-                  links.push('<li class="nav-item"><a class="nav-link" href="#">Cek Royalti</a></li>')
-                }
-                if (user.isPremium) {
-                  links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Downloaded Songs</a></li>')
-                }
-                links.push('<li class="nav-item"><a class="nav-link" href="#">Logout</a></li>')
-              } else {
-                links.push('<li class="nav-item"><a class="nav-link" href="#">Login</a></li>')
-                links.push('<li class="nav-item"><a class="nav-link" href="#">Registrasi</a></li>')
-              }
-            
-              navbarLinks.innerHTML = links.join('')
-            }
-            
-            setupNavbar()
-          </script>
+      const navbarLinks = document.getElementById('navbarLinks')
       
-          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>      
+      function setupNavbar() {
+        let links = []
         
-          {% block content %}
-        {% endblock content %}
-    </body>
+        console.log(isLoggedIn)
+        
+        if (isLoggedIn) {
+
+          links.push('<li class="nav-item"><a class="nav-link" href="/dashboard/">Dashboard</a></li>')
+          links.push('<li class="nav-item"><a class="nav-link" href="#">Chart</a></li>')
+          links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Playlist</a></li>')
+      
+          if (isPremium) {
+            links.push('<li class="nav-item"><a class="nav-link" href="/yellow/langganan_paket">Langganan Paket</a></li>');
+          }
+          if (role.includes('Podcaster')) {
+            links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Podcast</a></li>');
+          }
+          if (role.includes('Artist') || role.includes('Songwriter')) {
+            links.push('<li class="nav-item"><a class="nav-link" href="/red/list_album">Kelola Album & Songs</a></li>');
+          }
+          if (role.includes('Label')) {
+            links.push('<li class="nav-item"><a class="nav-link" href="/red/list_album">Kelola Album</a></li>');
+          }
+          if (role.includes('Artist') || role.includes('Songwriter') || role.includes('Label')) {
+            links.push('<li class="nav-item"><a class="nav-link" href="/red/list_royalti">Cek Royalti</a></li>');
+          }
+          if (isPremium) {
+            links.push('<li class="nav-item"><a class="nav-link" href="/yellow/downloaded">Kelola Downloaded Songs</a></li>');
+          }
+          links.push(
+            `<li class="nav-item">
+              <form action="{% url 'yellow:search' %}" method="get" class="flex items-center">
+                <input class="form-control me-2" type="text" name="query" placeholder="Cari" aria-label="Search" name="q">
+                <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
+              </form>
+            </li>`
+          )
+          links.push('<li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>')
+        } else {
+          links.push('<li class="nav-item"><a class="nav-link" href="/login">Login</a></li>')
+          links.push('<li class="nav-item"><a class="nav-link" href="/register">Registrasi</a></li>')
+        }
+      
+        navbarLinks.innerHTML = links.join('')
+      }
+      
+      setupNavbar()
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    {% block content %}
+
+    {% endblock %}
+
+    <br>
+    <br>
+    <br>
+
+    <footer class="footer bg-light text-center text-lg-start mt-auto">
+      <div class="container p-4">
+        <div class="row">
+          <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+            <h5 class="fw-bold">🐹 Marmut 🎵</h5>
+
+            <p>Marmut (Mari Muter Musik dan Podcast) adalah sebuah platform streaming konten musik dan podcast baru yang dikembangkan oleh perusahaan Pacil Universal Entertainment.</p>
+          </div>
+
+          <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+            <h5 class="fw-bold">👥 Kelompok E-5</h5>
+
+            <p>Proyek ini dibuat untuk memenuhi tugas kelompok pada mata kuliah Basis Data (CSGE602070) yang diselenggarakan oleh Fakultas Ilmu Komputer, Universitas Indonesia Tahun Ajaran 2023/2024 Semester Genap.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center p-3 text-light bg-dark">Copyright © 2024 E-5</div>
+    </footer>
+  </body>
 </html>

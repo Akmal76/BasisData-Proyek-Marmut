@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+<div class="container justify-content-center d-flex"">
+    <div class="card">
+        <form id="payment-form" method="post">
+            {% csrf_token %}
+            <table class="" style="margin-bottom: 5%; border-color: black;">
+                <thead>
+                    <tr>
+                      <th scope="col" style="text-align: center;">PEMBAYARAN PAKET</th>
+                </thead>
+            </table>
+            <table class="table" style="margin-bottom: 5%;margin-top: 5%; border: 2px solid black;">
+                <thead>
+                    <tr>
+                        <th scope="col">Jenis</th>
+                        <th scope="col">Harga</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for item in paket %}
+                        <input type="hidden" name="jenis" value="{{ item.jenis }}">
+                        <td value="{{ item.jenis }}" name="jenis">{{ item.jenis }}</td>
+                        <td value="{{ item.harga }}" name="harga">{{ item.harga }}</td>
+                        {% endfor %}
+                    <tr>
+                </tbody>
+            </table>
+            <select class="form-select"  name="metode_bayar" aria-label="Default select example" style="margin-top: 5%; width: 70%;">
+                <option selected disabled>Choose Payment Method</option>
+                {% for metode in metode_bayar %}
+                <option value="{{ metode }}">{{ metode }}</option>
+                {% endfor %}
+            </select>
+            <div class="container justify-content-center d-flex">
+                <button type="submit" class="btn" style="width: 60%; margin-top: 10%;">Pay</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">Payment Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="messageStatus">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-bs-dismiss="modal" id="closeModalButton">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#paymentModal').modal();
+        $('#payment-form').on('submit', function(event){
+            event.preventDefault(); // Prevent the default form submission
+            
+            $.ajax({
+                type: 'POST',
+                url: '{% url "yellow:pembayaran_paket" %}',
+                data: $('#payment-form').serialize(),
+                success: function(response){
+                    if(response.success){
+                        // Payment successful, show the success modal
+                        $('#paymentModal .modal-body').text(response.message);
+                        $('#paymentModal').modal('show');
+
+                        // Add event listener to the close button after modal is shown
+                        $('#closeModalButton').on('click', function() {
+                            // Reload the current page
+                            window.location.reload();
+                        });
+                    } else {
+                        // Payment failed, show the failure modal
+                        $('#paymentModal .modal-body').text(response.message);
+                        $('#paymentModal').modal('show');
+                    }
+                },
+                error: function(xhr, status, error){
+                    console.error(xhr.responseText);
+                    alert('Error');
+                }
+            });
+        });
+    });
+</script>    
+
+{% endblock %}

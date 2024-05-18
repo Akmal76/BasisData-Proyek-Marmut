@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+  <div class="container mt-5">
+    <h1 class="fw-bold">Buat Album</h1>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="judul" class="form-label">Judul:</label>
+        <input type="text" class="form-control" id="judul" name="judul" required>
+      </div>
+      <div class="mb-3">
+        <label for="label" class="form-label">Label:</label>
+        <select class="form-select" id="label" name="label" required>
+          <option value="" disabled selected>Select Label</option>
+          {% for label in labels %}
+            <option value="{{ label }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+{% endblock %}

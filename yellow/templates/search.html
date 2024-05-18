@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+<!-- <div class="container mt-5">
+    <h1 class="fw-bold">Hasil Pencarian "{{ query }}"</h1>
+    <form method="get" action="/yellow/search">
+        <div class="mb-3">
+            <input type="text" class="form-control" id="query" name="query" value="{{ query }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form> -->
+
+    <div class="container justify-content-center d-flex"">
+        <div class="card">
+            {% if song_result or podcast_result or user_playlist_result %}
+            <table class="" style="margin-bottom: 1%; border-color: black;">
+                <thead>
+                    <tr>
+                      <th scope="col" style="text-align: center;">Hasil Pencarian "{{ search_input }}"</th>
+                </thead>
+            </table>
+            <table class="table" style="margin-bottom: 1%;margin-top: 2%; border: 2px solid black;">
+                <thead>
+                    <tr>
+                      <th scope="col">Tipe</th>
+                      <th scope="col">Judul</th>
+                      <th scope="col">Oleh</th>
+                      <th scope="col">Actions</th>
+                </thead>
+                <tbody>
+                    {% if song_result %}
+                    {% for song in song_result %}
+                    <tr>
+                        <td>SONG</td>
+                        <td>{{ song.judul }}</td>
+                        <td>{{ song.nama }}</td>
+                        <td><a class="btn" style="width: 80%; margin-right: 1%;" href="#">Details</a></td>
+                    <tr>
+                    {% endfor %}
+                    {% endif %}
+    
+                    {% if podcast_result %}
+                    {% for podcast in podcast_result %}
+                    <tr>
+                        <td>PODCAST</td>
+                        <td>{{ podcast.judul }}</td>
+                        <td>{{ podcast.nama }}</td>
+                        <td><a class="btn" style="width: 80%; margin-right: 1%;" href="#">Details</a></td>
+                    <tr>
+                    {% endfor %}
+                    {% endif %}
+    
+                    {% if user_playlist_result %}
+                    {% for user_playlist in user_playlist_result %}
+                    <tr>
+                        <td>USER PLAYLIST</td>
+                        <td>{{ user_playlist.judul }}</td>
+                        <td>{{ user_playlist.nama }}</td>
+                        <td><a class="btn" style="width: 80%; margin-right: 1%;" href="#">Details</a></td>
+                    <tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+            {% else %}
+            Maaf, pencarian untuk "{{ query }}" tidak ditemukan
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
