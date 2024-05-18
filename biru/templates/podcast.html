@@ -86,27 +86,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Podcast1</td>
-                                    <td>0</td>
-                                    <td>0 menit</td>
-                                    <td>
-                                        <a href="episode.html" class="btn btn-primary">Lihat Daftar Episode</a>
-                                        <a href="createepisode.html" class="btn btn-secondary">Tambah Episode</a>
-                                        <button class="btn btn-danger">Hapus</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Podcast2</td>
-                                    <td>2</td>
-                                    <td>4 menit</td>
-                                    <td>
-                                        <a href="episode.html" class="btn btn-primary">Lihat Daftar Episode</a>
-                                        <a href="createepisode.html" class="btn btn-secondary">Tambah Episode</a>
-                                        <button class="btn btn-danger">Hapus</button>
-                                    </td>
-                                </tr>
-                                <!-- Add more rows as needed -->
+                                {% for podcast in podcasts %}
+                                    <tr>
+                                        <td>{{ podcast.1 }}</td>
+                                        <td>{{ podcast.2 }}</td>
+                                        <td>{{ podcast.3 }}</td>
+                                        <td><a href="{% url 'episode' podcast.0 %}" class="btn btn-primary">Lihat Daftar Episode</a>
+                                        <a href="{% url 'create_episode' podcast.0 %}" class="btn btn-warning">Tambah Episode</a>
+                                        <a href="#" class="btn btn-danger">Hapus</a></td>
+                                    </tr>
+                                    {% endfor %}
                             </tbody>
                         </table>
                     </div>

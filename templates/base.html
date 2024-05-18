@@ -49,7 +49,7 @@
             
               if (user.isLoggedIn) {
                 links.push('<li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>')
-                links.push('<li class="nav-item"><a class="nav-link" href="biru/">Chart</a></li>')
+                links.push('<li class="nav-item"><a class="nav-link" href="/chart/">Chart</a></li>')
                 links.push('<li class="nav-item"><a class="nav-link" href="#">Search Bar</a></li>')
                 links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Playlist</a></li>')
                 
@@ -57,7 +57,7 @@
                   links.push('<li class="nav-item"><a class="nav-link" href="#">Langganan Paket</a></li>')
                 }
                 if (user.role === 'Podcaster') {
-                  links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Podcast</a></li>')
+                  links.push('<li class="nav-item"><a class="nav-link" href="create_podcast/">Kelola Podcast</a></li>')
                 }
                 if (user.role === 'Artist' || user.role === 'Songwriter') {
                   links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Album & Songs</a></li>')

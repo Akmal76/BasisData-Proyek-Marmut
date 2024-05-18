@@ -87,21 +87,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                 {% for i in episode %}
                                 <tr>
-                                    <td>SubJudul1</td>
-                                    <td>Lorem Ipsum…</td>
-                                    <td>59 menit</td>
-                                    <td>18/03/2024</td>
-                                    <td><button class="btn btn-danger">Hapus</button></td>
+                                  <td>{{i.0}}</td> 
+                                  <td>{{i.1}}</td>  
+                                  <td>{{i.2}}</td>  
+                                  <td>{{i.3}}</td>
+                                  <td><a href="#" class="btn btn-danger">Hapus</a></td></td> 
                                 </tr>
-                                <tr>
-                                    <td>SubJudul2</td>
-                                    <td>Lorem Ipsum…</td>
-                                    <td>1 jam 2 menit</td>
-                                    <td>25/03/2024</td>
-                                    <td><button class="btn btn-danger">Hapus</button></td>
-                                </tr>
-                                <!-- Add more rows as needed -->
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>

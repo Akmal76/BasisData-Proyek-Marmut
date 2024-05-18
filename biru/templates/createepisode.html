@@ -76,22 +76,23 @@
                         <h3 class="card-title">Create Episode</h3>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form method="post">
+                            {% csrf_token %}
                             <div class="form-group">
                                 <label for="podcast">Podcast:</label>
                                 <input type="text" class="form-control" id="podcast" value="Podcast1" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="title">Judul:</label>
-                                <input type="text" class="form-control" id="title" placeholder="Enter episode title">
+                                <input type="text" class="form-control" id="title" name="title" placeholder="Enter episode title">
                             </div>
                             <div class="form-group">
                                 <label for="description">Deskripsi:</label>
-                                <textarea class="form-control" id="description" rows="3" placeholder="Enter episode description"></textarea>
+                                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter episode description"></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="duration">Durasi:</label>
-                                <input type="text" class="form-control" id="duration" placeholder="Enter duration">
+                                <input type="text" class="form-control" id="duration" name="duration" placeholder="Enter duration">
                             </div>
                             <button type="submit" class="btn btn-warning">Submit</button>
                         </form>
