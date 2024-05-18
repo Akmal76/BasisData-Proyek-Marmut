@@ -99,7 +99,7 @@ def pembayaran_paket(request):
         # print("Jenis paket:", jenis_paket)
         # print("Nominal:", nominal)
 
-        cursor.execute(create_transaction(id_transaksi, jenis_paket, request.session['email'], timestamp_dimulai, timestamp_berakhir, metode_bayar, nominal))
+        cursor.execute(f"""INSERT INTO TRANSACTION VALUES ('{id_transaksi}','{jenis_paket}','{request.session['email']}','{timestamp_dimulai}','{timestamp_berakhir}','{metode_bayar}',{nominal});""")
         connection.commit()
         request.session['is_premium'] = True
     return JsonResponse({'success': True, 'message': 'Pembelian paket berhasil'})
@@ -177,51 +177,7 @@ def delete_song(request, id_song, email_downloader):
         with connection.cursor() as cursor:
             cursor.execute(f"""DELETE FROM DOWNLOADED_SONG WHERE id_song = '{id_song}' AND email_downloader = '{email_downloader}'""")
             connection.commit()
-            cursor.execute(get_song_name(id_song))
+            cursor.execute(f"""SELECT judul FROM KONTEN WHERE id = '{id_song}';""")
             delete_song = parse(cursor)
         return JsonResponse({'success': True, 'message': f'Berhasil menghapus lagu dengan judul "{delete_song[0].get("judul")}" dari daftar unduhan!'})
 
-def get_song_name(id_song):
-    return f"""SELECT judul FROM KONTEN WHERE id = '{id_song}';"""
-
-
-
-
-
-
-def get_all_paket():
-    return """SELECT * FROM PAKET;"""
-
-def get_paket(jenis):
-    return f"""SELECT * FROM PAKET WHERE jenis = '{jenis}';"""
-
-def create_transaction(id_transaksi, jenis_paket, email, timestamp_dimulai, timestamp_berakhir, metode_bayar, nominal):
-    return f"""INSERT INTO TRANSACTION VALUES 
-    ('{id_transaksi}','{jenis_paket}','{email}','{timestamp_dimulai}','{timestamp_berakhir}','{metode_bayar}',{nominal});"""
-
-def get_riwayat_transaksi(email):
-    return f"""SELECT * FROM TRANSACTION WHERE email = '{email}';"""
-
-def add_one_month():
-    return """SELECT NOW() + INTERVAL '1 month'"""
-
-def add_three_month():
-    return """SELECT NOW() + INTERVAL '3 months'"""
-
-def add_six_month():
-    return """SELECT NOW() + INTERVAL '6 months'"""
-
-def add_one_year():
-    return """SELECT NOW() + INTERVAL '1 year'"""
-
-def get_harga_one_month():
-    return """SELECT harga FROM PAKET WHERE jenis = '1 BULAN';"""
-
-def get_harga_three_month():
-    return """SELECT harga FROM PAKET WHERE jenis = '3 BULAN';"""
-
-def get_harga_six_month():
-    return """SELECT harga FROM PAKET WHERE jenis = '6 BULAN';"""
-
-def get_harga_one_year():
-    return """SELECT harga FROM PAKET WHERE jenis = '1 TAHUN';"""
