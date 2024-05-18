@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from .utils import *
 from dateutil.relativedelta import relativedelta
 
-TRANSACTION_DATA = []
+# TRANSACTION_DATA = []
 
 def langganan_paket(request):
     with connection.cursor() as cursor:
@@ -25,8 +25,6 @@ def langganan_paket(request):
 
 # def langganan_paket(request):
 #     user = request.session.get('user')
-#     # if not user:
-#     #     return redirect('main:login')
 
 #     paket_data = get_paket_data()
 #     return render(request, 'langganan_paket.html', {'paket_data': paket_data, 'user': user})
@@ -72,46 +70,51 @@ def pembayaran_paket(request):
         jenis_paket = request.POST.get('jenis')
         metode_bayar = request.POST.get('metode_bayar')
 
-        cursor = connection.cursor()
+        try:
+            cursor = connection.cursor()
+            id_transaksi = str(uuid4())
+            timestamp_dimulai = timezone.now()
+            nominal = 0
+            if jenis_paket == '1 BULAN':
+                    timestamp_berakhir = add_months(timestamp_dimulai, 1)
+                    cursor.execute("""SELECT harga FROM PAKET WHERE jenis = '1 BULAN'""")
+                    nominal = cursor.fetchone()[0]
+            elif jenis_paket == '3 BULAN':
+                    timestamp_berakhir = add_months(timestamp_dimulai, 3)
+                    cursor.execute("""SELECT harga FROM paket WHERE jenis = '3 BULAN';""")
+                    nominal = cursor.fetchone()[0]
+            elif jenis_paket == '6 BULAN':
+                    timestamp_berakhir = add_months(timestamp_dimulai, 6)
+                    cursor.execute("""SELECT harga FROM PAKET WHERE jenis = '6 BULAN';""")
+                    nominal = cursor.fetchone()[0]
+            else:
+                    timestamp_berakhir = add_months(timestamp_dimulai, 12)
+                    cursor.execute("""SELECT harga FROM PAKET WHERE jenis = '1 TAHUN';""")
+                    nominal = cursor.fetchone()[0]
+                
+            # print("Start date:", timestamp_dimulai)
+            # print("End date:", timestamp_berakhir)
+            # print("Jenis paket:", jenis_paket)
+            # print("Nominal:", nominal)
 
-        id_transaksi = str(uuid4())
-        timestamp_dimulai = timezone.now()
-        nominal = 0
-        if jenis_paket == '1 BULAN':
-                timestamp_berakhir = add_months(timestamp_dimulai, 1)
-                cursor.execute("""SELECT harga FROM PAKET WHERE jenis = '1 BULAN'""")
-                nominal = cursor.fetchone()[0]
-        elif jenis_paket == '3 BULAN':
-                timestamp_berakhir = add_months(timestamp_dimulai, 3)
-                cursor.execute("""SELECT harga FROM paket WHERE jenis = '3 BULAN';""")
-                nominal = cursor.fetchone()[0]
-        elif jenis_paket == '6 BULAN':
-                timestamp_berakhir = add_months(timestamp_dimulai, 6)
-                cursor.execute("""SELECT harga FROM PAKET WHERE jenis = '6 BULAN';""")
-                nominal = cursor.fetchone()[0]
-        else:
-                timestamp_berakhir = add_months(timestamp_dimulai, 12)
-                cursor.execute("""SELECT harga FROM PAKET WHERE jenis = '1 TAHUN';""")
-                nominal = cursor.fetchone()[0]
-            
-        # print("Start date:", timestamp_dimulai)
-        # print("End date:", timestamp_berakhir)
-        # print("Jenis paket:", jenis_paket)
-        # print("Nominal:", nominal)
+            cursor.execute(f"""INSERT INTO TRANSACTION VALUES ('{id_transaksi}','{jenis_paket}','{request.session['email']}','{timestamp_dimulai}','{timestamp_berakhir}','{metode_bayar}',{nominal});""")
+            connection.commit()
+            request.session['isPremium'] = True
+            return JsonResponse({'success': True, 'message': 'Paket berhasil dibeli'})
+        except DatabaseError as e:
+            print(f"Database error occurred: {e}")
+            connection.rollback()
+            return JsonResponse({'success': False, 'message': 'Paket gagal dibeli'})
 
-        cursor.execute(f"""INSERT INTO TRANSACTION VALUES ('{id_transaksi}','{jenis_paket}','{request.session['email']}','{timestamp_dimulai}','{timestamp_berakhir}','{metode_bayar}',{nominal});""")
-        connection.commit()
-        request.session['is_premium'] = True
-    return JsonResponse({'success': True, 'message': 'Pembelian paket berhasil'})
 
 # FITUR SEARCH
-
-SONGS = [
-    {"title": "Love is in the air", "artist": "Artist1", "type": "SONG"},
-    {"title": "What is love", "artist": "Artist2", "type": "SONG"},
-    {"title": "Love is Blind Pod", "podcaster": "Podcaster1", "type": "PODCAST"},
-    {"title": "90s Love Songs", "creator": "User1", "type": "USER PLAYLIST"},
-]
+# data coba
+# SONGS = [
+#     {"title": "Love is in the air", "artist": "Artist1", "type": "SONG"},
+#     {"title": "What is love", "artist": "Artist2", "type": "SONG"},
+#     {"title": "Love is Blind Pod", "podcaster": "Podcaster1", "type": "PODCAST"},
+#     {"title": "90s Love Songs", "creator": "User1", "type": "USER PLAYLIST"},
+# ]
 
 def search(request):
     query = request.GET.get('query', '')
