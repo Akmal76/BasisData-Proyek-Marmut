@@ -20,7 +20,7 @@ def get_podcast_details(request, podcast_id):
     """, [str(podcast_id)])
 
         podcast = cursor.fetchone()
-        print('ayam', podcast)
+        print(podcast)
 
         cursor.execute("""
             SELECT E.judul, E.deskripsi, E.durasi, E.tanggal_rilis
