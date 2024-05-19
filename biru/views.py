@@ -62,7 +62,8 @@ def get_chart_details(request):
                         k.judul AS "Judul Lagu",
                         a.nama AS "Oleh (Nama Artis)",
                         k.tanggal_rilis AS "Tanggal Rilis",
-                        s.total_play AS "Total Plays"
+                        s.total_play AS "Total Plays",
+                        s.id_konten AS "ID Konten"
                     FROM 
                         song s
                     JOIN 
@@ -220,7 +221,8 @@ def get_chart_details_weekly(request):
                         k.judul AS "Judul Lagu",
                         a.nama AS "Oleh (Nama Artis)",
                         k.tanggal_rilis AS "Tanggal Rilis",
-                        s.total_play AS "Total Plays"
+                        s.total_play AS "Total Plays",
+                        s.id_konten AS "ID Konten"
                     FROM 
                         song s
                     JOIN 
@@ -252,7 +254,8 @@ def get_chart_details_monthly(request):
                         k.judul AS "Judul Lagu",
                         a.nama AS "Oleh (Nama Artis)",
                         k.tanggal_rilis AS "Tanggal Rilis",
-                        s.total_play AS "Total Plays"
+                        s.total_play AS "Total Plays",
+                        s.id_konten AS "ID Konten"
                     FROM 
                         song s
                     JOIN 
@@ -284,7 +287,8 @@ def get_chart_details_yearly(request):
                         k.judul AS "Judul Lagu",
                         a.nama AS "Oleh (Nama Artis)",
                         k.tanggal_rilis AS "Tanggal Rilis",
-                        s.total_play AS "Total Plays"
+                        s.total_play AS "Total Plays",
+                        s.id_konten AS "ID Konten"
                     FROM 
                         song s
                     JOIN 

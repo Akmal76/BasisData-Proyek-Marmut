@@ -23,4 +23,5 @@ urlpatterns = [
     path('red/', include('red.urls')),
     path('yellow/', include('yellow.urls')),
     path('biru/', include('biru.urls')),
+    path('green/', include('green.urls')),
 ]

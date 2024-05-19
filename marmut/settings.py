@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'yellow',
     'red',
     'biru',
+    'green',
 ]
 
 MIDDLEWARE = [

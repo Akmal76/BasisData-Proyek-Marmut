@@ -29,7 +29,7 @@
                                 <td>{{ song.nama }}</td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center">
-                                        <a class="btn btn-info me-2" href="#">Lihat</a>
+                                        <a class="btn btn-info me-2" href="/green/song_detail/{{ song.id }}">Lihat</a>
                                         <form id="deleteSong{{ song.id }}" class="deleteSongForm" action="{% url 'yellow:delete_song' song.id song.email_downloader %}" method="post">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-danger">
