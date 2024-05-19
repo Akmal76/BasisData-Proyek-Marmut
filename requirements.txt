@@ -5,4 +5,4 @@ psycopg2-binary
 requests
 urllib3
 psycopg2
-dateutil
+python-dateutil
