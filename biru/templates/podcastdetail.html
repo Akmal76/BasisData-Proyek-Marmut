@@ -69,51 +69,45 @@
     </nav>
 
     <div class="container mt-5 mb-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card mt-5">
-                    <div class="card-header bg-success text-light text-center">
-                        <h3 class="card-title">Podcast Detail</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Judul: Podcast1</p>
-                        <p>Genre(s): -Genre1 -Genre2</p>
-                        <p>Podcaster: Artist1</p>
-                        <p>Total Durasi: 8 jam 20 menit</p>
-                        <p>Tanggal Rilis: 18/03/24</p>
-                        <p>Tahun: 2024</p>
-                        <a href="previousPage.html" class="btn btn-warning">Kembali</a>
-                        <table class="table mt-3">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Judul Episode</th>
-                                    <th scope="col">Deskripsi</th>
-                                    <th scope="col">Durasi</th>
-                                    <th scope="col">Tanggal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>SubJudul1</td>
-                                    <td>Lorem Ipsum…</td>
-                                    <td>59 menit</td>
-                                    <td>18/03/2024</td>
-                                </tr>
-                                <tr>
-                                    <td>SubJudul2</td>
-                                    <td>Lorem Ipsum…</td>
-                                    <td>1 jam 2 menit</td>
-                                    <td>25/03/2024</td>
-                                </tr>
-                                <!-- Add more rows as needed -->
-                            </tbody>
-                        </table>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mt-5">
+                <div class="card-header bg-success text-light text-center">
+                    <h3 class="card-title">Podcast Detail</h3>
+                </div>
+                <div class="card-body">
+                    <p>Judul: {{ podcast.0 }}</p>
+                    <p>Genre(s): {% for genre in podcast.1 %} {{ genre }} {% endfor %}</p>
+                    <p>Podcaster: {{ podcast.2 }}</p>
+                    <p>Total Durasi: {{ podcast.3 }}</p>
+                    <p>Tanggal Rilis: {{ podcast.4 }}</p>
+                    <p>Tahun: {{ podcast.5 }}</p>
+                    <a href="{% url 'podcast' %}" class="btn btn-warning">Kembali</a>
+                    <table class="table mt-3">
+                        <thead>
+                            <tr>
+                                <th scope="col">Judul Episode</th>
+                                <th scope="col">Deskripsi</th>
+                                <th scope="col">Durasi</th>
+                                <th scope="col">Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for episode in episodes %}
+                            <tr>
+                                <td>{{ episode.0 }}</td>
+                                <td>{{ episode.1 }}</td>
+                                <td>{{ episode.2 }}</td>
+                                <td>{{ episode.3 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-
+</div>
 
     <footer class="footer mt-auto py-3 bg-success">
         <div class="container-fluid">

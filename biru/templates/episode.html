@@ -89,11 +89,14 @@
                             <tbody>
                                  {% for i in episode %}
                                 <tr>
-                                  <td>{{i.0}}</td> 
                                   <td>{{i.1}}</td>  
                                   <td>{{i.2}}</td>  
                                   <td>{{i.3}}</td>
-                                  <td><a href="#" class="btn btn-danger">Hapus</a></td></td> 
+                                  <td>{{i.4}}</td>
+                                  <td><td><form action="{% url 'delete_episode' episode_id=i.0 podcast_id=podcast_id %}"  method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Hapus</button>
+                                    </form></td> 
                                 </tr>
                                 {% endfor %}
                             </tbody>

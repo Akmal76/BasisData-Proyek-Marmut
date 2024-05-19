@@ -80,7 +80,7 @@
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="podcast">Podcast:</label>
-                                <input type="text" class="form-control" id="podcast" value="Podcast1" readonly>
+                                <input type="text" class="form-control" id="podcast" value={{ podcast_title }} readonly>
                             </div>
                             <div class="form-group">
                                 <label for="title">Judul:</label>

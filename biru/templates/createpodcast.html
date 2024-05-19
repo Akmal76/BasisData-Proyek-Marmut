@@ -76,26 +76,71 @@
                         <h3 class="card-title">Create Podcast</h3>
                     </div>
                     <div class="card-body">
-                        <form>
-                            <div class="form-group">
-                                <label for="title">Judul:</label>
-                                <input type="text" class="form-control" id="title" placeholder="Enter podcast title">
-                            </div>
-                            <div class="form-group">
-                                <label for="genre">Genre:</label>
-                                <select multiple class="form-control" id="genre">
-                                    <!-- Option values will be filled with the list of genres on the Marmut platform -->
-                                    <option value="genre1">Genre1</option>
-                                    <option value="genre2">Genre2</option>
-                                    <!-- Add more options as needed -->
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="duration">Durasi:</label>
-                                <input type="text" class="form-control" id="duration" placeholder="Enter duration">
-                            </div>
-                            <button type="submit" class="btn btn-warning">Submit</button>
-                        </form>
+                        <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="title">Judul:</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="Enter podcast title">
+    </div>
+    <div class="form-group">
+    <label for="genre">Genre:</label>
+        <div class="form-check">
+    <input class="form-check-input" type="checkbox" value="Pop" id="genre_pop" name="genre">
+    <label class="form-check-label" for="genre_pop">
+        Pop
+    </label>
+</div>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="Rock" id="genre_rock" name="genre">
+    <label class="form-check-label" for="genre_rock">
+        Rock
+    </label>
+</div>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="Hip-Hop" id="genre_hiphop" name="genre">
+    <label class="form-check-label" for="genre_hiphop">
+        Hip-Hop
+    </label>
+</div>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="Jazz" id="genre_jazz" name="genre">
+    <label class="form-check-label" for="genre_jazz">
+        Jazz
+    </label>
+</div>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="Country" id="genre_country" name="genre">
+    <label class="form-check-label" for="genre_country">
+        Country
+    </label>
+</div>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="Reggae" id="genre_reggae" name="genre">
+    <label class="form-check-label" for="genre_reggae">
+        Reggae
+    </label>
+</div>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="R&B" id="genre_rnb" name="genre">
+    <label class="form-check-label" for="genre_rnb">
+        R&B
+    </label>
+</div>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="Horror" id="genre_horror" name="genre">
+    <label class="form-check-label" for="genre_horror">
+        Horror
+    </label>
+</div>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="Comedy" id="genre_comedy" name="genre">
+    <label class="form-check-label" for="genre_comedy">
+        Comedy
+    </label>
+</div>
+    </div>
+    <button type="submit" class="btn btn-warning">Submit</button>
+</form>
                     </div>
                 </div>
             </div>
