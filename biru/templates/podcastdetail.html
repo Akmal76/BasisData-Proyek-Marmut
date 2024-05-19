@@ -18,7 +18,7 @@
                     <p>Total Durasi: {{ podcast.3 }}</p>
                     <p>Tanggal Rilis: {{ podcast.4 }}</p>
                     <p>Tahun: {{ podcast.5 }}</p>
-                    <a href="{% url 'biru:podcast' %}" class="btn btn-warning">Kembali</a>
+                    <a onclick="goBack()" class="btn btn-warning">Kembali</a>
                     <table class="table mt-3">
                         <thead>
                             <tr>
@@ -48,4 +48,10 @@
  
 </body>
 </html>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
 {% endblock %}

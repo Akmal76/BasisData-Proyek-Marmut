@@ -29,7 +29,7 @@
                                     <td>{{ song.judul }}</td>
                                     <td>{{ song.nama }}</td>
                                     <td class="text-center">
-                                        <a class="btn btn-info" href="#">Lihat</a>
+                                        <a class="btn btn-info" href="/green/song_detail/{{ song.id }}">Lihat</a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -42,7 +42,7 @@
                                     <td>{{ podcast.judul }}</td>
                                     <td>{{ podcast.nama }}</td>
                                     <td class="text-center">
-                                        <a class="btn btn-info" href="#">Lihat</a>
+                                        <a class="btn btn-info" href="/biru/podcast-detail/{{ podcast.id }}">Lihat</a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -55,7 +55,7 @@
                                     <td>{{ user_playlist.judul }}</td>
                                     <td>{{ user_playlist.nama }}</td>
                                     <td class="text-center">
-                                        <a class="btn btn-info" href="#">Lihat</a>
+                                        <a class="btn btn-info" href="/green/detail_playlist/{{ user_playlist.id_playlist }}">Lihat</a>
                                     </td>
                                 </tr>
                             {% endfor %}

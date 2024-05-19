@@ -38,13 +38,16 @@ def create_album(request):
         genres = request.POST.getlist('genre')
         songwriters = request.POST.getlist('songwriter')
 
+        print(artist)
         with connection.cursor() as cursor:
             cursor.execute("""
-                            SELECT artist.id
-                            FROM artist, akun
-                            WHERE artist.email_akun = akun.email
+                            SELECT ar.id
+                            FROM artist ar
+                            JOIN akun a ON ar.email_akun = a.email
+                            WHERE a.nama = %s;
                            """, [artist])
             artist = cursor.fetchone()[0]
+            print(artist)
 
             cursor.execute("""
                             INSERT INTO konten (id, judul, tanggal_rilis, tahun, durasi)

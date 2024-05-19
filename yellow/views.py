@@ -154,7 +154,8 @@ def search(request):
         podcast_result = parse(cursor)
 
         sql_query_playlist=f"""
-            SELECT UP.judul, A.nama, UP.id_playlist FROM USER_PLAYLIST UP, AKUN A
+            SELECT UP.judul, A.nama, UP.id_playlist, UP.email_pembuat
+            FROM USER_PLAYLIST UP, AKUN A
             WHERE UP.email_pembuat = A.email and UP.judul ILIKE '%{query}%';
             """
         cursor.execute(sql_query_playlist)
