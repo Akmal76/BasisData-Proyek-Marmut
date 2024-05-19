@@ -59,7 +59,9 @@
             <a class="blockButton btn btn-primary bg-blue-500 text-white py-2 px-4 rounded" href="/green/add_playlist_lagu/{{detail_song.0.10}}">Add to Playlist</a>
             <form id="downloadForm" method="POST" action="{% url 'green:download_lagu' detail_song.0.10 %}">
                 {% csrf_token %}
-                <button type="button" class="blockButton btn btn-primary bg-blue-500 text-white py-2 px-4 rounded" onclick="downloadSong()">Download</button>
+                {% if is_premium %}
+                    <button type="button" class="blockButton btn btn-primary bg-blue-500 text-white py-2 px-4 rounded" onclick="downloadSong()">Download</button>
+                {% endif %}
             </form>
             <div id="message"></div>
             <a class="blockButton btn btn-primary bg-blue-500 text-white py-2 px-4 rounded" onclick="goBack()">Kembali</a>
@@ -76,7 +78,6 @@
             window.history.back();
         }
 
-        
     document.addEventListener('DOMContentLoaded', function() {
         const input = document.getElementById('progress-input');
         const playButton = document.getElementById('play-button');

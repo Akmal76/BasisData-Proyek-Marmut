@@ -168,6 +168,8 @@ def search(request):
         'user_playlist_result' : user_playlist_result
     }
 
+    print(user_playlist_result)
+
     return render(request, 'search.html', context)
 
 

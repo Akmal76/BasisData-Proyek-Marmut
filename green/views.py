@@ -49,7 +49,7 @@ def hapus_lagu(request):
             id_song = cursor.fetchone()
             cursor.execute("delete from playlist_song where id_song = %s",[id_song])
             
-            redirect_string = "/green/detail_playlist/"+playlist_id
+            redirect_string = "/green/detail_playlist/"+playlist_id+"/"+request.session['email']
 
         return redirect(redirect_string)
 
@@ -121,7 +121,7 @@ def tambah_lagu(request):
         except InternalError as e:
             return JsonResponse({'error': str(e)}, status=500)
         
-        redirect_url = f"/green/detail_playlist/{playlist_id}"
+        redirect_url = f"/green/detail_playlist/{playlist_id}/{request.session['email']}"
 
         return JsonResponse({'redirect_url': redirect_url})
     
@@ -213,13 +213,13 @@ def format_duration(duration):
         minutes = duration % 60
         return f"{hours} jam {minutes} menit"
 
-def detail_playlist(request, playlist_id):
+def detail_playlist(request, playlist_id, email_pembuat):
     try:
         playlist_id = uuid.UUID(str(playlist_id))
     except ValueError:
         return HttpResponseBadRequest("Invalid playlist_id")
 
-    email_user = request.session.get('email')
+    email_user = email_pembuat
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM user_playlist WHERE id_playlist = %s AND email_pembuat = %s", [playlist_id, email_user])
@@ -321,8 +321,14 @@ def song_detail(request, song_id):
         detail_song = cursor.fetchall()
         print(detail_song)
 
+    user_data = json.loads(request.session['user'])[0]
+    print(user_data)
+    is_premium = user_data['status_langganan'] == 'Premium'
+    print(is_premium)
+
     context = {
         'detail_song': detail_song,
+        'is_premium': is_premium,
     }
 
     return render(request, 'song_detail.html', context)

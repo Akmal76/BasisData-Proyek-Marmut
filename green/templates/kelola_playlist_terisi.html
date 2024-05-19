@@ -99,7 +99,7 @@
                         <td>{{ playlist.2 }}</td>
                         <td>{{ playlist.3 }} menit</td>
                         <td class="action-buttons">
-                            <a class="btn btn-info" href="/green/detail_playlist/{{playlist.0}}">Detail</a>
+                            <a class="btn btn-info" href="/green/detail_playlist/{{playlist.0}}/{{user}}">Detail</a>
                             <a class="btn btn-info" href="/green/ubah_playlist/{{playlist.0}}">Ubah</a>
                             <form method="post" action="/green/hapus_playlist/{{playlist.0}}/" style="display: inline;">
                                 {% csrf_token %}

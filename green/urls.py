@@ -5,7 +5,7 @@ app_name = 'green'
 
 urlpatterns = [
     path('tambah_playlist/', views.tambah_playlist, name='tambah_playlist'),
-    path('detail_playlist/<uuid:playlist_id>/', views.detail_playlist, name='detail_playlist'),
+    path('detail_playlist/<uuid:playlist_id>/<str:email_pembuat>', views.detail_playlist, name='detail_playlist'),
     path('add_playlist_lagu/<uuid:song_id>/', views.add_playlist_lagu, name='add_playlist_lagu'),
     path('tambah_lagu/', views.tambah_lagu, name='tambah_lagu'),
     path('kelola_playlist_terisi/', views.kelola_playlist_terisi, name='kelola_playlist_terisi'),
