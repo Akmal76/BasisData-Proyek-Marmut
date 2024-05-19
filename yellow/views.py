@@ -30,7 +30,13 @@ def langganan_paket(request):
 #     return render(request, 'langganan_paket.html', {'paket_data': paket_data, 'user': user})
 
 def add_months(start_date, months):
-    return start_date + relativedelta(months=months)
+    month = start_date.month - 1 + months
+    year = start_date.year + month // 12
+    month = month % 12 + 1
+    day = min(start_date.day, [31,
+                               29 if year % 4 == 0 and not year % 100 == 0 or year % 400 == 0 else 28,
+                               31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1])
+    return datetime(year, month, day)
 
 def pembayaran(request, jenis):
     with connection.cursor() as cursor:
