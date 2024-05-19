@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+<body class="d-flex flex-column bg-light" style="height: 100%;">
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card mt-5">
+                    <div class="card-header bg-success text-light text-center">
+                        <h3 class="card-title">Chart Detail</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Display chart details -->
+                        <p>Tipe: Yearly Top 20</p>
+                        <a href="{% url 'biru:chart' %}" class="btn btn-secondary">Kembali</a>
+                        <table class="table mt-3">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Judul Lagu</th>
+                                    <th scope="col">Oleh</th>
+                                    <th scope="col">Tanggal Rilis</th>
+                                    <th scope="col">Total Plays</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                 {% for chart_type, details in chart_details.items %}
+                                {% for detail in details %}
+                                    <tr>
+                                        <td>{{ detail.0 }}</td>
+                                        <td>{{ detail.1 }}</td>
+                                        <td>{{ detail.2 }}</td>
+                                        <td>{{ detail.3 }}</td>
+                                        <td><a href="" class="btn btn-primary">Lihat</a></td>
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

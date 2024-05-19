@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+<body class="d-flex flex-column bg-light" style="height: 100%;">
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-q0">
+                <div class="card mt-5">
+<div class="card-header bg-success text-light d-flex justify-content-between align-items-center">
+    <h3 class="card-title" style="margin-left: 44%;">Podcast List</h3>
+    <a href="{% url 'biru:create_podcast' %}" class="btn btn-light">Tambah Podcast</a>
+</div>
+
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Judul</th>
+                                    <th scope="col">Jumlah Episode</th>
+                                    <th scope="col">Total Durasi</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for podcast in podcasts %}
+                                    <tr>
+                                        <td>{{ podcast.1 }}</td>
+                                        <td>{{ podcast.2 }}</td>
+                                        <td>{{ podcast.3 }}</td>
+                                        <td><a href="{% url 'biru:episodes' podcast.0 %}" class="btn btn-primary">Lihat Daftar Episode</a>
+                                            <a href="{% url 'biru:get_podcast_details' podcast.0 %}" class="btn btn-secondary">Play Podcast</a>
+                                        <a href="{% url 'biru:create_episode' podcast.0 %}" class="btn btn-warning">Tambah Episode</a>  
+                                        <form action="{% url 'biru:delete_podcast' podcast.0 %}" method="post" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">Hapus</button>
+                                        </form>
+                                    </td>
+                                    </tr>
+                                    {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+  
+</body>
+</html>
+{% endblock %}

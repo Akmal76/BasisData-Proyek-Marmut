@@ -61,18 +61,18 @@
           links.push('<li class="nav-item"><a class="nav-link" href="/dashboard/">Dashboard</a></li>')
           
           if (role.includes('Pengguna Biasa') || role.includes('Podcaster') || role.includes('Artist') || role.includes('Songwriter')) {
-            links.push('<li class="nav-item"><a class="nav-link" href="#">Chart</a></li>')
+            links.push('<li class="nav-item"><a class="nav-link" href="/biru/chart/">Chart</a></li>')
           }
 
           if (role.includes('Pengguna Biasa') || role.includes('Podcaster') || role.includes('Artist') || role.includes('Songwriter')) {
-            links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Playlist</a></li>')
+            links.push('<li class="nav-item"><a class="nav-link" href="">Kelola Playlist</a></li>')
           }
 
           if (!isPremium && (role.includes('Pengguna Biasa') || role.includes('Podcaster') || role.includes('Artist') || role.includes('Songwriter'))) {
             links.push('<li class="nav-item"><a class="nav-link" href="/yellow/langganan_paket">Langganan Paket</a></li>');
           }
           if (role.includes('Podcaster')) {
-            links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Podcast</a></li>');
+            links.push('<li class="nav-item"><a class="nav-link" href="/biru/list_podcasts/">Kelola Podcast</a></li>');
           }
           if (role.includes('Artist') || role.includes('Songwriter')) {
             links.push('<li class="nav-item"><a class="nav-link" href="/red/list_album">Kelola Album & Songs</a></li>');
