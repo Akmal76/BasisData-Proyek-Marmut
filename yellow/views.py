@@ -98,11 +98,12 @@ def pembayaran_paket(request):
             # print("Nominal:", nominal)
 
             cursor.execute(f"""INSERT INTO TRANSACTION VALUES ('{id_transaksi}','{jenis_paket}','{request.session['email']}','{timestamp_dimulai}','{timestamp_berakhir}','{metode_bayar}',{nominal});""")
+            cursor.execute("""DELETE FROM NONPREMIUM WHERE email = %s""", [request.session['email']])
             connection.commit()
-            request.session['isPremium'] = True
+            # request.session['isPremium'] = True
             return JsonResponse({'success': True, 'message': 'Paket berhasil dibeli'})
-        except DatabaseError as e:
-            print(f"Database error occurred: {e}")
+        except DatabaseError as error:
+            print(f"Database error occurred: {error}")
             connection.rollback()
             return JsonResponse({'success': False, 'message': 'Paket gagal dibeli'})
 

@@ -2,51 +2,38 @@
 {% load static %}
 
 {% block meta %}
-
 {% endblock %}
+
 {% block content %}
-<div class="centered-container">
-    <div class="card">
-        <table class="" style="margin-bottom: 5%;">
-            <thead>
-                <tr>
-                  <th scope="col" style="text-align: left;">LANGGANAN PAKET</th>
-                  <th scope="col" style="text-align: right; width: 30%;"><a class="btn" href="{% url 'yellow:riwayat_transaksi' %}">See History</a></th>
-                </tr>
-            </thead>
-        </table>
-        <table class="table table-striped-columns table-bordered" style="border: 2px solid black;">
-            <thead>
-                <tr>
-                  <th scope="col">Jenis</th>
-                  <th scope="col">Harga</th>
-                  <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
+<div class="container mt-5">
+    <div class="card p-4 shadow-lg">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>LANGGANAN PAKET</h2>
+            <a class="btn btn-primary" href="{% url 'yellow:riwayat_transaksi' %}">Riwayat Transaksi</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Jenis</th>
+                        <th scope="col">Harga</th>
+                        <th scope="col" class="text-center">Action</th>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for paket in paket %}
-                    <tr>
-                        <td>{{ paket.jenis }}</td>
-                        <td>{{ paket.harga }}</td>
-                        <td><a class="btn" style="width: 60%; margin-left: 20%;" href="{% url 'yellow:pembayaran' paket.jenis %}">Subscribe</a></td>
-                    </tr>
+                        <tr>
+                            <td>{{ paket.jenis }}</td>
+                            <td>{{ paket.harga }}</td>
+                            <td class="text-center">
+                                <a class="btn btn-success" href="{% url 'yellow:pembayaran' paket.jenis %}">Langganan</a>
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
-                
-            </tbody>
-          </table>
+            </table>
+        </div>
     </div>
 </div>
 
-<!-- <script>
-    document.getElementById('langgananPaketForm').addEventListener('submit', function(event) {
-        var selectedOption = document.getElementById('jenis_paket').selectedOptions[0];
-        var harga = selectedOption.getAttribute('data-harga');
-        var jenis = selectedOption.getAttribute('data-jenis');
-
-        document.getElementById('harga_paket').value = harga;
-        document.getElementById('jenis_paket_text').value = jenis;
-    });
-</script> -->
 {% endblock %}

@@ -60,7 +60,7 @@
           links.push('<li class="nav-item"><a class="nav-link" href="#">Chart</a></li>')
           links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Playlist</a></li>')
       
-          if (isPremium) {
+          if (!isPremium) {
             links.push('<li class="nav-item"><a class="nav-link" href="/yellow/langganan_paket">Langganan Paket</a></li>');
           }
           if (role.includes('Podcaster')) {
