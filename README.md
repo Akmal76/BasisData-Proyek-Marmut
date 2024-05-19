@@ -11,8 +11,8 @@ Proyek ini dibuat untuk memenuhi tugas kelompok pada mata kuliah **Basis Data (C
 
 | Nama | NPM | Fitur |
 | -- | -- | -- |
-| Kevin Gilbert Sinaga | 2206826053 | 
-| Nabiel Ahmad Ardhityo | 2206083331 |
-| Sheryl Ivana Widjaja | 2206824943 |
+| Kevin Gilbert Sinaga | 2206826053 | Hijau |
+| Nabiel Ahmad Ardhityo | 2206083331 | Kuning |
+| Sheryl Ivana Widjaja | 2206824943 | Biru |
 | Akmal Ramadhan | 2206081534 | Merah |
 
