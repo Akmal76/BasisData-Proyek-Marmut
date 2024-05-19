@@ -1,0 +1,135 @@
+
+Copy code
+{% extends 'base.html' %}
+
+{% block meta %}
+    <title>Your Page Title</title>
+    <style>
+    .container {
+        width: 80%;
+        margin: 50px auto 0;
+    }
+
+    .blockButton {
+        display: block;
+        width: 100%; 
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table, th, td {
+        border: 1px solid black;
+        padding: 8px;
+    }
+
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+{% endblock meta %}
+{% block content %}
+<body>
+
+    <div class="container">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+             {% if detail_song %}
+            <div id="playlist-detail" class="p-5 mb-5 bg-white shadow-md sm:rounded-lg">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Detail Songs</h2>
+                <p class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"><strong>Judul: {{detail_song.0.0}}</strong> <span id="judul"></span></p> 
+                <p class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"><strong>Genre: {{detail_song.0.1}}</strong> <span id="genre"></span></p>
+                <p class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"><strong>Artist: {{detail_song.0.2}}</strong> <span id="artist"></span></p>
+                <p class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"><strong>Songwriter: {{detail_song.0.3}}</strong> <span id="songwriter"></span></p>
+                <p class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"><strong>Durasi: {{detail_song.0.4}}</strong> <span id="durasi"></span></p>
+                <p class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"><strong>Tanggal Rilis: {{detail_song.0.5}}</strong> <span id="tanggalrilis"></span></p>
+                <p class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"><strong>Tahun: {{detail_song.0.6}}</strong> <span id="tahun"></span></p>
+                <p class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"><strong>Total Play: {{detail_song.0.7}}</strong> <span id="totalplay"></span></p>
+                <p class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"><strong>Total Downloads: {{detail_song.0.8}}</strong> <span id="totaldownloads"></span></p>
+                <p class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"><strong>Album: {{detail_song.0.9}}</strong> <span id="albums"></span></p>
+            </div>
+            <div class="progress-container">
+                <label for="progress-input">Progress:</label>
+                <input class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" type="number" id="progress-input" name="progress-input" min="0" max="100" value="0">
+            </div>
+            <br>
+            <button id="play-button" class="blockButton btn btn-primary bg-blue-500 text-white py-2 px-4 rounded">Play</button>
+            <a class="blockButton btn btn-primary bg-blue-500 text-white py-2 px-4 rounded" href="/green/add_playlist_lagu/{{detail_song.0.10}}">Add to Playlist</a>
+            <form id="downloadForm" method="POST" action="{% url 'green:download_lagu' detail_song.0.10 %}">
+                {% csrf_token %}
+                <button type="button" class="blockButton btn btn-primary bg-blue-500 text-white py-2 px-4 rounded" onclick="downloadSong()">Download</button>
+            </form>
+            <div id="message"></div>
+            <a class="blockButton btn btn-primary bg-blue-500 text-white py-2 px-4 rounded" href="/green/kelola_playlist_terisi/">Kembali</a>
+            <p id="message" class="text-sm text-gray-500 mt-2"></p>
+            {% else %}
+            <p>Detail lagu tidak ditemukan.</p>
+            {% endif %}
+        </div><br>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('progress-input');
+        const playButton = document.getElementById('play-button');
+        const message = document.getElementById('message');
+
+        playButton.addEventListener('click', function() {
+            const progress = parseInt(input.value);
+            if (progress > 70) {
+                const songId = '{{ detail_song.0.10 }}'; 
+                fetch("{% url 'green:update_play_count' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        song_id: songId,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        message.textContent = 'Play count updated successfully and entry added to AKUN_PLAY_SONG.';
+                    } else {
+                        message.textContent = 'Error updating play count.';
+                    }
+                })
+                .catch(error => {
+                    message.textContent = 'Error updating play count.';
+                    console.error('Error:', error);
+                });
+            } else {
+                message.textContent = 'Progress is not enough to play the song.';
+            }
+        });
+    });
+
+
+    function downloadSong() {
+    const form = document.getElementById('downloadForm');
+    const url = form.action;
+    const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({}),
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageDiv = document.getElementById('message');
+        if (data.success) {
+            messageDiv.innerHTML = `<div class="alert alert-success">${data.success}</div>`;
+        } else if (data.error) {
+            messageDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+        }
+    })
+}
+    </script>
+</body>
+{% endblock content %}
