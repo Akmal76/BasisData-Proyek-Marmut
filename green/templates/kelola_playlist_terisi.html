@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+    <title>User Playlist</title>
+    <style>
+    .container {
+        width: 80%;
+        margin: 50px auto 0;
+        padding: 20px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header h2 {
+        margin: 0;
+    }
+
+    .header button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .playlist-table table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .playlist-table th, .playlist-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .playlist-table th {
+        background-color: #f8f8f8;
+    }
+
+    .action-buttons button {
+        margin: 2px;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .action-buttons .detail-btn {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .action-buttons .edit-btn {
+        background-color: #ffc107;
+        color: white;
+    }
+
+    .action-buttons .delete-btn {
+        background-color: #dc3545;
+        color: white;
+    }
+    </style>
+{% endblock meta %}
+
+{% block content %}
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>User Playlist</h2>
+            <button onclick="redirectToAdd()">Tambah Playlist</button>
+        </div>
+        <div class="playlist-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Jumlah Lagu</th>
+                        <th>Total Durasi</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if not playlist_query %}
+                    <tr>
+                        <td colspan="4">Anda belum memiliki playlist</td>
+                    </tr>
+                    {% else %}
+                    {% for playlist in playlist_query %}
+                    <tr>
+                        <td>{{ playlist.1 }}</td>
+                        <td>{{ playlist.2 }}</td>
+                        <td>{{ playlist.3 }} menit</td>
+                        <td class="action-buttons">
+                            <a class="btn btn-info" href="/green/detail_playlist/{{playlist.0}}">Detail</a>
+                            <a class="btn btn-info" href="/green/ubah_playlist/{{playlist.0}}">Ubah</a>
+                            <form method="post" action="/green/hapus_playlist/{{playlist.0}}/" style="display: inline;">
+                                {% csrf_token %}
+                                <button class="delete-btn" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function redirectToAdd() {
+            window.location.href = "{% url 'green:tambah_playlist' %}";
+        }
+        function redirectToEdit(playlistID) {
+            window.location.href = `/playlist/ubah_playlist?playlist_id=${encodeURIComponent(playlistID)}`;
+        }
+        function redirectToDelete(playlistID) {
+            window.location.href = `/playlist/hapus_playlist?playlist_id=${encodeURIComponent(playlistID)}`;
+        }
+    </script>
+</body>
+{% endblock content %}

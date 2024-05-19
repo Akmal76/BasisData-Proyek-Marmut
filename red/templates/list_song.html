@@ -20,13 +20,14 @@
       <tbody>
         {% for song in songs %}
           <tr>
-            <td>{{ song.judul }}</td>
-            <td>{{ song.durasi }}</td>
-            <td>{{ song.total_play }}</td>
-            <td>{{ song.total_download }}</td>
+            <td>{{ song.1 }}</td>
+            <td>{{ song.2 }}</td>
+            <td>{{ song.3 }}</td>
+            <td>{{ song.4 }}</td>
             <td>
-              <a href="" class="btn btn-primary btn-sm">Lihat Detail</a>
-              <a href="" class="btn btn-danger btn-sm">Hapus</a>
+              {% comment %} TODO: Route to R Play Song {% endcomment %}
+              <a href="/green/song_detail/{{ song.0 }}" class="btn btn-primary btn-sm">Lihat Detail</a>
+              <a href="/red/delete_lagu/{{ id_album }}/{{ song.0 }}" class="btn btn-danger btn-sm">Hapus</a>
             </td>
           </tr>
         {% endfor %}

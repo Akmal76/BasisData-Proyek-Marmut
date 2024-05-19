@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card p-4 shadow-lg">
+        <div class="text-center mb-4">
+            <h2>PEMBAYARAN PAKET</h2>
+        </div>
+        <form id="payment-form" method="post">
+            {% csrf_token %}
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Jenis</th>
+                            <th scope="col">Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in paket %}
+                            <tr>
+                                <input type="hidden" name="jenis" value="{{ item.jenis }}">
+                                <td>{{ item.jenis }}</td>
+                                <td>{{ item.harga }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group mt-4">
+                <label for="metode_bayar" class="form-label">Metode Pembayaran</label>
+                <select class="form-select" name="metode_bayar" aria-label="Default select example">
+                    <option selected disabled>Pilih Metode Pembayaran</option>
+                    {% for metode in metode_bayar %}
+                        <option value="{{ metode }}">{{ metode }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary" style="width: 60%;">Bayar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">Status Pembayaran</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="messageStatus">
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeModalButton">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#paymentModal').modal();
+        $('#payment-form').on('submit', function(event){
+            event.preventDefault(); // Prevent the default form submission
+            
+            $.ajax({
+                type: 'POST',
+                url: '{% url "yellow:pembayaran_paket" %}',
+                data: $('#payment-form').serialize(),
+                success: function(response){
+                    if(response.success){
+                        // Payment successful, show the success modal
+                        $('#paymentModal .modal-body').text(response.message);
+                        $('#paymentModal').modal('show');
+
+                        // Add event listener to the close button after modal is shown
+                        $('#closeModalButton').on('click', function() {
+                            // Reload the current page
+                            window.location.reload();
+                        });
+                    } else {
+                        // Payment failed, show the failure modal
+                        $('#paymentModal .modal-body').text(response.message);
+                        $('#paymentModal').modal('show');
+                    }
+                },
+                error: function(xhr, status, error){
+                    console.error(xhr.responseText);
+                    alert('Error');
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

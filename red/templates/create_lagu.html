@@ -11,42 +11,38 @@
       {% csrf_token %}
       <div class="mb-3">
         <label for="album" class="form-label">Album:</label>
-        <input type="text" class="form-control" id="album" name="album" value="{{ selected_album }}" readonly>
+        <input type="text" class="form-control" id="album" name="album" value="{{ album }}" readonly>
       </div>
       <div class="mb-3">
-        <label for="judul" class="form-label">Judul:</label>
-        <input type="text" class="form-control" id="judul" name="judul" required>
+        <label for="judul_lagu" class="form-label">Judul Lagu:</label>
+        <input type="text" class="form-control" id="judul_lagu" name="judul_lagu" required>
       </div>
-      {% if user_role == 'Artist' %}
-        <input type="hidden" id="artist" name="artist" value="{{ user_name }}">
-      {% else %}
-        <div class="mb-3">
-          <label for="artist" class="form-label">Artist:</label>
+      <div class="mb-3">
+        <label for="artist" class="form-label">Artist:</label>
+        {% if 'Artist' in request.session.roles %}
+          <input type="text" class="form-control" id="artist" name="artist" value="{{ user.nama }}" readonly>
+        {% else %}
           <select class="form-select" id="artist" name="artist" required>
             <option value="" disabled selected>Select Artist</option>
             {% for artist in artists %}
               <option value="{{ artist }}">{{ artist }}</option>
             {% endfor %}
           </select>
-        </div>
-      {% endif %}
-      {% if user_role == 'Songwriter' %}
-        <input type="hidden" id="songwriter" name="songwriter" value="{{ user_name }}">
-      {% else %}
-        <div class="mb-3">
-          <label for="songwriter" class="form-label">Songwriter:</label>
-          <select class="form-select" id="songwriter" name="songwriter" multiple required>
-            {% for songwriter in songwriters %}
-              <option value="{{ songwriter }}">{{ songwriter }}</option>
-            {% endfor %}
-          </select>
-        </div>
-      {% endif %}
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        <label for="songwriter" class="form-label">Songwriter:</label>
+        <select class="form-select" id="songwriter" name="songwriter" multiple required>
+          {% for songwriter in songwriters %}
+            <option value="{{ songwriter.1 }}" {% if request.session.email == songwriter.2 %}selected{% endif %}>{{ songwriter.1 }}</option>
+          {% endfor %}
+        </select>
+      </div>
       <div class="mb-3">
         <label for="genre" class="form-label">Genre:</label>
         <select class="form-select" id="genre" name="genre" multiple required>
           {% for genre in genres %}
-            <option value="{{ genre }}">{{ genre }}</option>
+            <option value="{{ genre.0 }}">{{ genre.0 }}</option>
           {% endfor %}
         </select>
       </div>

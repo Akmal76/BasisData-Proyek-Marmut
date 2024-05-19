@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+    <title>User Playlist Detail</title>
+    <style>
+    .container {
+        width: 80%;
+        margin: 50px auto 0;
+        padding: 20px;
+    }
+
+    .playlist-detail, .songs-table {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+
+    .playlist-detail h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .playlist-detail p {
+        margin: 5px 0;
+    }
+
+    .songs-table table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .songs-table th, .songs-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .songs-table th {
+        background-color: #f8f8f8;
+        text-align: left;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .buttons button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .buttons .shuffle-btn {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .buttons .back-btn {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    </style>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+{% endblock meta %}
+
+{% block content %}
+<body>
+    <div class="container">
+        <div class="playlist-detail">
+            {% if detail_playlist %}
+            <h2>User Playlist Detail</h2>
+            <p><strong>Judul:</strong> {{ detail_playlist.2 }}</p>
+            <p><strong>Pembuat:</strong> {{ detail_playlist.0 }}</p>
+            <p><strong>Jumlah Lagu:</strong> {{ detail_playlist.4 }}</p>
+            <p><strong>Total Durasi:</strong> {{ total_durasi }}</p>
+            <p><strong>Tanggal Dibuat:</strong> {{ detail_playlist.5 }}</p>
+            <p><strong>Deskripsi:</strong> {{ detail_playlist.3 }}</p>
+            <div class="buttons">
+                <form id="shufflePlay" action="{% url 'green:shuffle_play' %}" method="POST">
+                    <input type="hidden" name="playlist_id" value="{{ detail_playlist.6 }}">
+                    <button type="submit" class="shuffle-btn">Shuffle Play</button>
+                </form>
+                <button class="back-btn" onclick="history.back()">Kembali</button>
+            </div>
+            {% else %}
+            <p>Detail playlist tidak ditemukan.</p>
+            {% endif %}
+        </div>
+
+        <div class="songs-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Judul Lagu</th>
+                        <th>Oleh</th>
+                        <th>Durasi</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if not songs_in_playlist %}
+                    <tr>
+                        <td colspan="4">Playlist belum memiliki lagu</td>
+                    </tr>
+                    {% else %}
+                    {% for song in songs_in_playlist %}
+                    <tr>
+                        <td>{{ song.title }}</td>
+                        <td>{{ song.artist }}</td>
+                        <td>{{ song.duration }}</td>
+                        <td class="action-buttons">
+                            <a class="btn btn-info " href="/green/song_detail/{{song.id}}">Lihat</a>
+                            <form action="{% url 'green:update_play_count' %}" method="POST">
+                                <input type="hidden" name="song_id" value="{{ song.id }}">
+                                <button class="btn btn-success" type="submit">Play</button>
+                            </form>
+                            <form action="{% url 'green:hapus_lagu' %}" method="POST">
+                                <input type="hidden" name="playlist_id" value="{{ detail_playlist.6 }}">
+                                <input type="hidden" name="song.title" value="{{ song.title }}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                    <a class="btn btn-info" href="/green/add_lagu_playlist/{{detail_playlist.6}}">Tambah Lagu</a>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="shufflePlayModal" tabindex="-1" aria-labelledby="shufflePlayModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="shufflePlayModalLabel">Shuffle Play</h5>
+            </div>
+            <div class="modal-body">
+            Playlist berhasil shuffle play.
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+  
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('shufflePlay').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            var formData = new FormData(this);
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}', 
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('error')
+                } else  {
+                    $('#shufflePlayModal').modal('show');
+                }
+            });
+        });
+    </script>
+</body>
+{% endblock content %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card mt-5">
+                    <div class="card-header bg-success text-light text-center">
+                        <h3 class="card-title">Chart List</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tipe</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Daily Top 20</td>
+                                    <td><a href="{% url 'biru:get_chart_details' %}" class="btn btn-primary">Lihat Daftar Lagu</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Weekly Top 20</td>
+                                    <td><a href="{% url 'biru:get_chart_details_weekly' %}" class="btn btn-primary">Lihat Daftar Lagu</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Monthly Top 20</td>
+                                    <td><a href="{% url 'biru:get_chart_details_monthly' %}" class="btn btn-primary">Lihat Daftar Lagu</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Yearly Top 20</td>
+                                    <td><a href="{% url 'biru:get_chart_details_yearly' %}" class="btn btn-primary">Lihat Daftar Lagu</a></td>
+                                </tr>
+                                <!-- Add more rows as needed -->
+                            </tbody>
+                        </table>
+                        <a href="{% url 'main:show_dashboard' %}"class="btn btn-secondary">Kembali</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+</body>
+</html>
+{% endblock %}

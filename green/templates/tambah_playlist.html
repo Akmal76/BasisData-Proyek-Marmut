@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+  <title>Create Playlist</title>
+  <style>
+    .container {
+        width: 80%;
+        margin: 50px auto 0;
+        padding: 20px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .header h2 {
+        margin: 0;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-group input, .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .buttons button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+  </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+{% endblock meta %}
+
+{% block content %}
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Create Playlist</h2>
+        </div>
+        <form method="POST" action="{% url 'green:form_tambah_playlist' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="playlistName">Nama Playlist:</label>
+                <input type="text" id="playlistName" name="playlistName" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="deskripsi">Deskripsi:</label>
+                <textarea id="deskripsi" name="deskripsi" class="form-control"></textarea>
+            </div>
+            <tr>
+                <td></td>
+                <td><input type="submit" name="submit" class="btn btn-success" value="Submit"/></td> 
+                <a class="btn btn-danger" href="{% url 'green:kelola_playlist_terisi' %}" class="back-btn">Kembali</a>
+           </tr>  
+            <!-- <div class="buttons">
+                <input type="submit" name="submit" class="button" value=Submit></>
+                <button type="button" class="back-btn" onclick="history.back()">Kembali</button>
+            </div> -->
+        </form>
+    </div>
+</body>
+{% endblock content %}
+</html>

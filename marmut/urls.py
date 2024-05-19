@@ -21,4 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
     path('red/', include('red.urls')),
+    path('yellow/', include('yellow.urls')),
+    path('biru/', include('biru.urls')),
+    path('green/', include('green.urls')),
 ]

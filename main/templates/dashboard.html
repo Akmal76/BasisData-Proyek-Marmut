@@ -4,67 +4,82 @@
 <div class="container mt-5">
     <h1 class="fw-bold">🪪 Dashboard</h1>
     <div id="userInfo">
-        <!-- Placeholder for user information -->
     </div>
     <div id="additionalInfo" class="mt-3">
-        <!-- Placeholder for additional information based on user role -->
     </div>
 </div>
 
 <script>
-    // Dummy data
+    var roles = "{{ roles }}";
+
     var userData = {
-        name: "Ayam Pargoy",
-        email: "user1@mail.com",
-        role: ["Podcaster"],
-        contact: "081238792422",
-        city: "Jakarta",
-        gender: "Laki Laki",
-        birthplace: "Lampung",
-        birthdate: "1969-12-11"
+        nama: "{{ user.nama }}",
+        email: "{{ user.email }}",
+        status_langganan: "{{ user.status_langganan }}",
+        kota_asal: "{{ user.kota_asal }}",
+        gender: "{{ user.gender }}",
+        tempat_lahir: "{{ user.tempat_lahir }}",
+        tanggal_lahir: "{{ user.tanggal_lahir }}"
     };
 
-    function displayUserInfo() {
-        var userInfoHTML = `
+    var labelData = {
+        nama: "{{ label.nama }}",
+        email: "{{ label.email }}",
+        kontak: "{{ label.kontak }}"
+    };
+
+    function displayInfo() {
+        var userInfoHTML = ``;
+
+        if (roles.includes("Label")) {
+            userInfoHTML += `
             <table class="table">
                 <tr>
                     <td><strong>Nama:</strong></td>
-                    <td>${userData.name}</td>
+                    <td>${labelData.nama}</td>
+                </tr>
+                <tr>
+                    <td><strong>Email:</strong></td>
+                    <td>${labelData.email}</td>
+                </tr>
+                <tr>
+                    <td><strong>Kontak:</strong></td>
+                    <td>${labelData.kontak}</td>
+                </tr>
+            `;
+        } else {
+            userInfoHTML += `
+            <table class="table">
+                <tr>
+                    <td><strong>Nama:</strong></td>
+                    <td>${userData.nama}</td>
                 </tr>
                 <tr>
                     <td><strong>Email:</strong></td>
                     <td>${userData.email}</td>
                 </tr>
-        `;
-
-        if (userData.role.includes("Label")) {
-            userInfoHTML += `
                 <tr>
-                    <td><strong>Kontak:</strong></td>
-                    <td>${userData.contact}</td>
-                </tr>
-            `;
-        } else {
-            userInfoHTML += `
+                    <td><strong>Status Langganan:</strong></td>
+                    <td>${userData.status_langganan}</td>
                 <tr>
                     <td><strong>Kota Asal:</strong></td>
-                    <td>${userData.city}</td>
+                    <td>${userData.kota_asal}</td>
                 </tr>
                 <tr>
                     <td><strong>Gender:</strong></td>
-                    <td>${userData.gender}</td>
+                    <td>${userData.gender === '0' ? 'Perempuan' : 'Laki-Laki'}</td>
                 </tr>
                 <tr>
                     <td><strong>Tempat Lahir:</strong></td>
-                    <td>${userData.birthplace}</td>
+                    <td>${userData.tempat_lahir}</td>
                 </tr>
                 <tr>
                     <td><strong>Tanggal Lahir:</strong></td>
-                    <td>${userData.birthdate}</td>
+                    <td>${userData.tanggal_lahir}</td>
                 </tr>
                 <tr>
-                    <td><strong>Role:</strong></td>
-                    <td>${userData.role.join(', ')}</td>
+                    <td><strong>Roles:</strong></td>
+                    <td>{% for role in roles %} {{ role }} {% if not forloop.last %}, {% endif %}{% endfor %}</td>
                 </tr>
             `;
         }
@@ -78,14 +93,11 @@
     function displayAdditionalInfo() {
         var additionalInfoHTML = "";
 
-        // Check if the user has multiple roles
-        var hasMultipleRoles = userData.role.length > 1;
-
-        // Additional info based on role
-        if (userData.role.includes("Pengguna Biasa")) {
+        if (roles.includes("Pengguna Biasa")) {
+            console.log("Pengguna Biasa");
             additionalInfoHTML += "<h3 class='mt-4 fw-bold'>Playlist</h3>";
-            // Dummy playlist data
-            var playlists = ["Playlist 1", "Playlist 2", "Playlist 3", "Playlist 4", "Playlist 5", "Playlist 6", "Playlist 7", "Playlist 8", "Playlist 9", "Playlist 10", "Playlist 11", "Playlist 12", "Playlist 13", "Playlist 14", "Playlist 15", "Playlist 16", "Playlist 17", "Playlist 18", "Playlist 19", "Playlist 20"];
+            var playlists = {{ playlists|default_if_none:""|safe }};
+
             if (playlists.length === 0) {
                 additionalInfoHTML += "<p>Belum Memiliki Playlist</p>";
             } else {
@@ -103,10 +115,11 @@
                 });
                 additionalInfoHTML += "</div>";
             }
-        } else if (userData.role.includes("Artist") || userData.role.includes("Songwriter")) {
+        }
+        
+        if (roles.includes("Artist") || roles.includes("Songwriter")) {
             additionalInfoHTML += "<h3 class='mt-4 fw-bold'>Lagu</h3>";
-            // Dummy song data
-            var songs = ["Song 1", "Song 2", "Song 3"];
+            var songs = {{ songs|default_if_none:""|safe }};
             if (songs.length === 0) {
                 additionalInfoHTML += "<p>Belum Memiliki Lagu</p>";
             } else {
@@ -124,10 +137,11 @@
                 });
                 additionalInfoHTML += "</div>";
             }
-        } else if (userData.role.includes("Podcaster")) {
+        }
+
+        if (roles.includes("Podcaster")) {
             additionalInfoHTML += "<h3 class='mt-4 fw-bold'>Podcast</h3>";
-            // Dummy podcast data
-            var podcasts = ["Podcast 1", "Podcast 2", "Podcast 3"];
+            var podcasts = {{ podcasts|default_if_none:""|safe }};
             if (podcasts.length === 0) {
                 additionalInfoHTML += "<p>Belum Memiliki Podcast</p>";
             } else {
@@ -145,10 +159,11 @@
                 });
                 additionalInfoHTML += "</div>";
             }
-        } else if (userData.role.includes("Label")) {
+        }
+        
+        if (roles.includes("Label")) {
             additionalInfoHTML += "<h3 class='mt-4 fw-bold'>Album</h3>";
-            // Dummy album data
-            var albums = [];
+            var albums = {{ albums|default_if_none:""|safe }};
             if (albums.length === 0) {
                 additionalInfoHTML += "<p>Belum Memproduksi Album</p>";
             } else {
@@ -172,7 +187,7 @@
     }
 
     // Display user information and additional info based on role
-    displayUserInfo();
+    displayInfo();
     displayAdditionalInfo();
 </script>
 
