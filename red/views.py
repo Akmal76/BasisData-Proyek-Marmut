@@ -38,8 +38,6 @@ def create_album(request):
         genres = request.POST.getlist('genre')
         songwriters = request.POST.getlist('songwriter')
 
-        print(genres, songwriters)
-
         with connection.cursor() as cursor:
             cursor.execute("""
                             SELECT artist.id
@@ -124,14 +122,6 @@ def create_album(request):
 
 def delete_album(request, id_album):
     with connection.cursor() as cursor:
-            cursor.execute("""
-                            DELETE FROM songwriter_write_song
-                            WHERE id_song IN (SELECT id_konten FROM song WHERE id_album = %s)
-                           """, [id_album])
-            cursor.execute("""
-                            DELETE FROM song
-                            WHERE id_album = %s
-                           """, [id_album])
             cursor.execute("""
                             DELETE FROM album
                             WHERE id = %s
@@ -296,8 +286,9 @@ def list_album(request):
                                 album.id, album.judul, label.nama, album.jumlah_lagu, album.total_durasi;
                            """, [request.session['email']])
             albums = cursor.fetchall()
+            albums = sorted(albums, key=lambda x: (x[2], x[1]))
     
-    elif 'Songwriter' in request.session['roles']:
+    if 'Songwriter' in request.session['roles']:
         with connection.cursor() as cursor:
             cursor.execute("""
                             SELECT DISTINCT
@@ -322,8 +313,9 @@ def list_album(request):
                                 akun.email = %s;
                            """, [request.session['email']])
             albums = cursor.fetchall()
+            albums = sorted(albums, key=lambda x: (x[2], x[1]))
     
-    else:
+    if 'Label' in request.session['roles']:
         with connection.cursor() as cursor:
             cursor.execute("""
                             SELECT
@@ -339,6 +331,7 @@ def list_album(request):
                                 label.email = %s;
                            """, [request.session['email']])
             albums = cursor.fetchall()
+            albums = sorted(albums, key=lambda x: (x[1]))
 
     return render(request, 'list_album.html', {'albums': albums, 'user_role': request.session['roles']})
 
@@ -373,43 +366,60 @@ def list_royalti(request):
     roles = request.session['roles']
     email = request.session['email']
 
-    query = ""
     if 'Artist' in roles or 'Songwriter' in roles:
-        query += """
-            SELECT
-                k.judul AS judul_lagu,
-                a.judul AS judul_album,
-                s.total_play,
-                s.total_download,
-                s.total_play * phc.rate_royalti AS total_royalti
-            FROM
-                royalti r
-            JOIN
-                song s ON r.id_song = s.id_konten
-            JOIN
-                album a ON s.id_album = a.id
-            JOIN
-                konten k ON s.id_konten = k.id
-            JOIN
-                pemilik_hak_cipta phc ON r.id_pemilik_hak_cipta = phc.id
-            WHERE
-                phc.id IN (
-                    SELECT DISTINCT phc.id
-                    FROM
-                        pemilik_hak_cipta phc
-                    LEFT JOIN
-                        artist ar ON ar.id_pemilih_hak_cipta = phc.id
-                    LEFT JOIN
-                        songwriter sw ON sw.id_pemilik_hak_cipta = phc.id
-                    LEFT JOIN
-                        akun a ON (ar.email_akun = a.email OR sw.email_akun = a.email)
-                    WHERE
-                        a.email = %s
-                )
-        """
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                            SELECT 
+                                k.judul AS "Judul Lagu", 
+                                a.judul AS "Judul Album", 
+                                s.total_play AS "Total Play", 
+                                s.total_download AS "Total Download", 
+                                (s.total_play * phc.rate_royalti) AS "Total Royalti"
+                            FROM 
+                                song s
+                            JOIN 
+                                album a ON s.id_album = a.id
+                            JOIN 
+                                konten k ON s.id_konten = k.id
+                            JOIN 
+                                artist ar ON s.id_artist = ar.id
+                            JOIN 
+                                pemilik_hak_cipta phc ON ar.id_pemilik_hak_cipta = phc.id
+                            WHERE 
+                                ar.email_akun = %s;
+                        """, [email])
+            royalties = set(cursor.fetchall())
+
+            cursor.execute("""
+                           SELECT 
+                                k.judul AS "Judul Lagu", 
+                                a.judul AS "Judul Album", 
+                                s.total_play AS "Total Play", 
+                                s.total_download AS "Total Download", 
+                                (s.total_play * phc.rate_royalti) AS "Total Royalti"
+                            FROM 
+                                songwriter sw
+                            JOIN 
+                                songwriter_write_song sws ON sw.id = sws.id_songwriter
+                            JOIN 
+                                song s ON sws.id_song = s.id_konten
+                            JOIN 
+                                album a ON s.id_album = a.id
+                            JOIN 
+                                konten k ON s.id_konten = k.id
+                            JOIN 
+                                pemilik_hak_cipta phc ON sw.id_pemilik_hak_cipta = phc.id
+                            WHERE 
+                                sw.email_akun = %s;
+                        """, [email])
+            
+            royalties.update(cursor.fetchall())
+            royalties = sorted(royalties, key=lambda x: (x[1], x[0]))
+
 
     elif 'Label' in roles:
-        query += """
+        with connection.cursor() as cursor:
+            cursor.execute("""
             SELECT
                 konten.judul AS judul_lagu,
                 album.judul AS judul_album,
@@ -428,10 +438,9 @@ def list_royalti(request):
                 pemilik_hak_cipta phc ON label.id_pemilik_hak_cipta = phc.id
             WHERE
                 label.email = %s
-        """
-
-    with connection.cursor() as cursor:
-        cursor.execute(query, [email])
-        royalties = cursor.fetchall()
+        """, [email])
+        
+            royalties = cursor.fetchall()
+            royalties = sorted(royalties, key=lambda x: (x[1], x[0]))
 
     return render(request, 'list_royalti.html', {'royalties': royalties})
