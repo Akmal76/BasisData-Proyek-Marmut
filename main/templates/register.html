@@ -1,0 +1,167 @@
+{% extends 'base.html' %} {% load static %} {% block meta %} {% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <div class="text-center">
+    <h1 class="fw-bold">Register</h1>
+    <div class="mb-3">
+      <button id="btnUser" class="btn btn-primary m-2" onclick="showUserForm()">
+        Pengguna
+      </button>
+      <br />
+      <button
+        id="btnLabel"
+        class="btn btn-primary m-2"
+        onclick="showLabelForm()"
+      >
+        Label
+      </button>
+    </div>
+  </div>
+
+  <!-- User registration form -->
+  <div id="userForm" style="display: none">
+    <!-- Form content as previously described -->
+    <form id="userRegistrationForm" method="post">
+      {% csrf_token %}
+      <input
+        type="email"
+        name="email"
+        class="form-control mb-3"
+        placeholder="Email"
+        required
+      />
+      <input
+        type="password"
+        name="password"
+        class="form-control mb-3"
+        placeholder="Password"
+        required
+      />
+      <input
+        type="text"
+        name="nama"
+        class="form-control mb-3"
+        placeholder="Nama"
+        required
+      />
+      <select name="gender" class="form-select mb-3" required>
+        <option value="">Gender</option>
+        <option value="1">Laki-laki</option>
+        <option value="0">Perempuan</option>
+      </select>
+      <input
+        type="text"
+        name="tempat_lahir"
+        class="form-control mb-3"
+        placeholder="Tempat Lahir"
+        required
+      />
+      <input
+        type="date"
+        name="tanggal_lahir"
+        class="form-control mb-3"
+        placeholder="Tanggal Lahir"
+        required
+      />
+      <input
+        type="text"
+        name="kota_asal"
+        class="form-control mb-3"
+        placeholder="Kota Asal"
+        required
+      />
+      <div class="mb-3">
+        <label>Role:</label>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value="podcaster"
+            id="podcaster"
+            name="role"
+          />
+          <label class="form-check-label" for="podcaster">Podcaster</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value="artist"
+            id="artist"
+            name="role"
+          />
+          <label class="form-check-label" for="artist">Artist</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value="songwriter"
+            id="songwriter"
+            name="role"
+          />
+          <label class="form-check-label" for="songwriter">Songwriter</label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+  </div>
+
+  <!-- Label registration form -->
+  <div id="labelForm" style="display: none">
+    <form id="labelRegistrationForm" method="post">
+      {% csrf_token %}
+      <input
+        type="email"
+        name="email"
+        class="form-control mb-3"
+        placeholder="Email"
+        required
+      />
+      <input
+        type="password"
+        name="password"
+        class="form-control mb-3"
+        placeholder="Password"
+        required
+      />
+      <input
+        type="text"
+        name="nama"
+        class="form-control mb-3"
+        placeholder="Nama"
+        required
+      />
+      <input
+        type="text"
+        name="kontak"
+        class="form-control mb-3"
+        placeholder="Kontak"
+        required
+      />
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+  </div>
+
+  <!-- Error message box -->
+  {% if error_message %}
+  <div class="alert alert-danger mt-3" role="alert">{{ error_message }}</div>
+  {% endif %}
+</div>
+
+<script>
+  function showUserForm() {
+    document.getElementById("userForm").style.display = "block";
+    document.getElementById("labelForm").style.display = "none";
+    document.getElementById("btnUser").style.display = "none";
+    document.getElementById("btnLabel").style.display = "none";
+  }
+
+  function showLabelForm() {
+    document.getElementById("userForm").style.display = "none";
+    document.getElementById("labelForm").style.display = "block";
+    document.getElementById("btnUser").style.display = "none";
+    document.getElementById("btnLabel").style.display = "none";
+  }
+</script>
+{% endblock %}

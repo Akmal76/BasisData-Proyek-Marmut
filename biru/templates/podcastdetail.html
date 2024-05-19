@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+<body class="d-flex flex-column bg-light" style="height: 100%;">
+    <div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mt-5">
+                <div class="card-header bg-success text-light text-center">
+                    <h3 class="card-title">Podcast Detail</h3>
+                </div>
+                <div class="card-body">
+                    <p>Judul: {{ podcast.0 }}</p>
+                    <p>Genre(s): {{ podcast.1 }}</p>
+                    <p>Podcaster: {{ podcast.2 }}</p>
+                    <p>Total Durasi: {{ podcast.3 }}</p>
+                    <p>Tanggal Rilis: {{ podcast.4 }}</p>
+                    <p>Tahun: {{ podcast.5 }}</p>
+                    <a onclick="goBack()" class="btn btn-warning">Kembali</a>
+                    <table class="table mt-3">
+                        <thead>
+                            <tr>
+                                <th scope="col">Judul Episode</th>
+                                <th scope="col">Deskripsi</th>
+                                <th scope="col">Durasi</th>
+                                <th scope="col">Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for episode in episodes %}
+                            <tr>
+                                <td>{{ episode.0 }}</td>
+                                <td>{{ episode.1 }}</td>
+                                <td>{{ episode.2 }}</td>
+                                <td>{{ episode.3 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+</body>
+</html>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+{% endblock %}

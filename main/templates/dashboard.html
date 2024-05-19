@@ -1,119 +1,195 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h1>Dashboard</h1>
-        <div id="userInfo">
-            <!-- Placeholder for user information -->
-        </div>
-        <div id="additionalInfo" class="mt-3">
-            <!-- Placeholder for additional information based on user role -->
-        </div>
+<div class="container mt-5">
+    <h1 class="fw-bold">🪪 Dashboard</h1>
+    <div id="userInfo">
     </div>
+    <div id="additionalInfo" class="mt-3">
+    </div>
+</div>
 
-    <script>
-        // Dummy data
-        var userData = {
-            name: "Ayam Pargoy",
-            email: "user1@mail.com",
-            role: ["Label"],
-            contact: "081238792422",
-            city: "Jakarta",
-            gender: "Laki Laki",
-            birthplace: "Lampung",
-            birthdate: "1969-12-11"
-        };
+<script>
+    var roles = "{{ roles }}";
 
-        function displayUserInfo() {
-            var userInfoHTML = `
-                <p><strong>Nama:</strong> ${userData.name}</p>
-                <p><strong>Email:</strong> ${userData.email}</p>
+    var userData = {
+        nama: "{{ user.nama }}",
+        email: "{{ user.email }}",
+        status_langganan: "{{ user.status_langganan }}",
+        kota_asal: "{{ user.kota_asal }}",
+        gender: "{{ user.gender }}",
+        tempat_lahir: "{{ user.tempat_lahir }}",
+        tanggal_lahir: "{{ user.tanggal_lahir }}"
+    };
+
+    var labelData = {
+        nama: "{{ label.nama }}",
+        email: "{{ label.email }}",
+        kontak: "{{ label.kontak }}"
+    };
+
+    function displayInfo() {
+        var userInfoHTML = ``;
+
+        if (roles.includes("Label")) {
+            userInfoHTML += `
+            <table class="table">
+                <tr>
+                    <td><strong>Nama:</strong></td>
+                    <td>${labelData.nama}</td>
+                </tr>
+                <tr>
+                    <td><strong>Email:</strong></td>
+                    <td>${labelData.email}</td>
+                </tr>
+                <tr>
+                    <td><strong>Kontak:</strong></td>
+                    <td>${labelData.kontak}</td>
+                </tr>
             `;
+        } else {
+            userInfoHTML += `
+            <table class="table">
+                <tr>
+                    <td><strong>Nama:</strong></td>
+                    <td>${userData.nama}</td>
+                </tr>
+                <tr>
+                    <td><strong>Email:</strong></td>
+                    <td>${userData.email}</td>
+                </tr>
+                <tr>
+                    <td><strong>Status Langganan:</strong></td>
+                    <td>${userData.status_langganan}</td>
+                <tr>
+                    <td><strong>Kota Asal:</strong></td>
+                    <td>${userData.kota_asal}</td>
+                </tr>
+                <tr>
+                    <td><strong>Gender:</strong></td>
+                    <td>${userData.gender === '0' ? 'Perempuan' : 'Laki-Laki'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Tempat Lahir:</strong></td>
+                    <td>${userData.tempat_lahir}</td>
+                </tr>
+                <tr>
+                    <td><strong>Tanggal Lahir:</strong></td>
+                    <td>${userData.tanggal_lahir}</td>
+                </tr>
+                <tr>
+                    <td><strong>Roles:</strong></td>
+                    <td>{% for role in roles %} {{ role }} {% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                </tr>
+            `;
+        }
 
-            if (userData.role.includes("Label")) {
-                userInfoHTML += `<p><strong>Kontak:</strong> ${userData.contact}</p>`;
+        userInfoHTML += `</table>`;
+
+        document.getElementById("userInfo").innerHTML = userInfoHTML;
+    }
+
+    // Function to display additional information based on user role
+    function displayAdditionalInfo() {
+        var additionalInfoHTML = "";
+
+        if (roles.includes("Pengguna Biasa")) {
+            console.log("Pengguna Biasa");
+            additionalInfoHTML += "<h3 class='mt-4 fw-bold'>Playlist</h3>";
+            var playlists = {{ playlists|default_if_none:""|safe }};
+
+            if (playlists.length === 0) {
+                additionalInfoHTML += "<p>Belum Memiliki Playlist</p>";
             } else {
-                userInfoHTML += `
-                    <p><strong>Kota Asal:</strong> ${userData.city}</p>
-                    <p><strong>Gender:</strong> ${userData.gender}</p>
-                    <p><strong>Tempat Lahir:</strong> ${userData.birthplace}</p>
-                    <p><strong>Tanggal Lahir:</strong> ${userData.birthdate}</p>
-                    <p><strong>Role:</strong> ${userData.role.join(', ')}</p>
-                `;
+                additionalInfoHTML += "<div class='row'>";
+                playlists.forEach(function(playlist) {
+                    additionalInfoHTML += `
+                        <div class='col-lg-4 col-md-6 mb-4'>
+                            <div class='card'>
+                                <div class='card-body'>
+                                    <h5 class='card-title'>${playlist}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                additionalInfoHTML += "</div>";
             }
-
-            document.getElementById("userInfo").innerHTML = userInfoHTML;
+        }
+        
+        if (roles.includes("Artist") || roles.includes("Songwriter")) {
+            additionalInfoHTML += "<h3 class='mt-4 fw-bold'>Lagu</h3>";
+            var songs = {{ songs|default_if_none:""|safe }};
+            if (songs.length === 0) {
+                additionalInfoHTML += "<p>Belum Memiliki Lagu</p>";
+            } else {
+                additionalInfoHTML += "<div class='row'>";
+                songs.forEach(function(song) {
+                    additionalInfoHTML += `
+                        <div class='col-lg-4 col-md-6 mb-4'>
+                            <div class='card'>
+                                <div class='card-body'>
+                                    <h5 class='card-title'>${song}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                additionalInfoHTML += "</div>";
+            }
         }
 
-        // Function to display additional information based on user role
-        function displayAdditionalInfo() {
-            var additionalInfoHTML = "";
-
-            // Check if the user has multiple roles
-            var hasMultipleRoles = userData.role.length > 1;
-
-            // Additional info based on role
-            if (userData.role.includes("Pengguna Biasa")) {
-                additionalInfoHTML += "<h3>Playlist</h3>";
-                // Dummy playlist data
-                var playlists = ["Playlist 1", "Playlist 2", "Playlist 3"];
-                if (playlists.length === 0) {
-                    additionalInfoHTML += "<p>Belum Memiliki Playlist</p>";
-                } else {
-                    additionalInfoHTML += "<ul>";
-                    playlists.forEach(function(playlist) {
-                        additionalInfoHTML += `<li>${playlist}</li>`;
-                    });
-                    additionalInfoHTML += "</ul>";
-                }
-            } else if (userData.role.includes("Artist") || userData.role.includes("Songwriter")) {
-                additionalInfoHTML += "<h3>Lagu</h3>";
-                // Dummy song data
-                var songs = ["Song 1", "Song 2", "Song 3"];
-                if (songs.length === 0) {
-                    additionalInfoHTML += "<p>Belum Memiliki Lagu</p>";
-                } else {
-                    additionalInfoHTML += "<ul>";
-                    songs.forEach(function(song) {
-                        additionalInfoHTML += `<li>${song}</li>`;
-                    });
-                    additionalInfoHTML += "</ul>";
-                }
-            } else if (userData.role.includes("Podcaster")) {
-                additionalInfoHTML += "<h3>Podcast</h3>";
-                // Dummy podcast data
-                var podcasts = ["Podcast 1", "Podcast 2", "Podcast 3"];
-                if (podcasts.length === 0) {
-                    additionalInfoHTML += "<p>Belum Memiliki Podcast</p>";
-                } else {
-                    additionalInfoHTML += "<ul>";
-                    podcasts.forEach(function(podcast) {
-                        additionalInfoHTML += `<li>${podcast}</li>`;
-                    });
-                    additionalInfoHTML += "</ul>";
-                }
-            } else if (userData.role.includes("Label")) {
-                additionalInfoHTML += "<h3>Album</h3>";
-                // Dummy album data
-                var albums = [];
-                if (albums.length === 0) {
-                    additionalInfoHTML += "<p>Belum Memproduksi Album</p>";
-                } else {
-                    additionalInfoHTML += "<ul>";
-                    albums.forEach(function(album) {
-                        additionalInfoHTML += `<li>${album}</li>`;
-                    });
-                    additionalInfoHTML += "</ul>";
-                }
+        if (roles.includes("Podcaster")) {
+            additionalInfoHTML += "<h3 class='mt-4 fw-bold'>Podcast</h3>";
+            var podcasts = {{ podcasts|default_if_none:""|safe }};
+            if (podcasts.length === 0) {
+                additionalInfoHTML += "<p>Belum Memiliki Podcast</p>";
+            } else {
+                additionalInfoHTML += "<div class='row'>";
+                podcasts.forEach(function(podcast) {
+                    additionalInfoHTML += `
+                        <div class='col-lg-4 col-md-6 mb-4'>
+                            <div class='card'>
+                                <div class='card-body'>
+                                    <h5 class='card-title'>${podcast}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                additionalInfoHTML += "</div>";
             }
-
-            document.getElementById("additionalInfo").innerHTML = additionalInfoHTML;
+        }
+        
+        if (roles.includes("Label")) {
+            additionalInfoHTML += "<h3 class='mt-4 fw-bold'>Album</h3>";
+            var albums = {{ albums|default_if_none:""|safe }};
+            if (albums.length === 0) {
+                additionalInfoHTML += "<p>Belum Memproduksi Album</p>";
+            } else {
+                additionalInfoHTML += "<div class='row'>";
+                albums.forEach(function(album) {
+                    additionalInfoHTML += `
+                        <div class='col-lg-4 col-md-6 mb-4'>
+                            <div class='card'>
+                                <div class='card-body'>
+                                    <h5 class='card-title'>${album}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                additionalInfoHTML += "</div>";
+            }
         }
 
-        // Display user information and additional info based on role
-        displayUserInfo();
-        displayAdditionalInfo();
-    </script>
+        document.getElementById("additionalInfo").innerHTML = additionalInfoHTML;
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    // Display user information and additional info based on role
+    displayInfo();
+    displayAdditionalInfo();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 {% endblock %}

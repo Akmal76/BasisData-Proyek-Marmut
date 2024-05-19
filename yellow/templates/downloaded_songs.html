@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card p-4 shadow-lg">
+        {% if downloaded_songs %}
+            <div class="text-center mb-4">
+                <h2>DAFTAR LAGU</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Judul Lagu</th>
+                            <th scope="col">Oleh</th>
+                            <th scope="col" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for song in downloaded_songs %}
+                            <tr>
+                                <input type="hidden" name="judul" value="{{ song.judul }}" class="judul">
+                                <td>{{ song.judul }}</td>
+                                <input type="hidden" name="nama" value="{{ song.nama }}" class="nama">
+                                <td>{{ song.nama }}</td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <a class="btn btn-info me-2" href="/green/song_detail/{{ song.id }}">Lihat</a>
+                                        <form id="deleteSong{{ song.id }}" class="deleteSongForm" action="{% url 'yellow:delete_song' song.id song.email_downloader %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-4">
+                <a class="btn btn-secondary" href="/dashboard">Back</a>
+            </div>
+        {% else %}
+            <div class="text-center">
+                <p>Anda belum mengunduh lagu</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Berhasil</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.deleteSongForm').on('submit', function(event) {
+            event.preventDefault();
+            var form = $(this);
+            $.ajax({
+                type: 'POST',
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function(response) {
+                    if(response.success) {
+                        window.location.href = window.location.href.split('?')[0] + "?showModal=true&message=" + encodeURIComponent(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert('Error');
+                }
+            });
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('showModal')) {
+            const message = urlParams.get('message');
+            $('#deleteModal .modal-body').text(message);
+            $('#deleteModal').modal('show');
+        }
+    });
+</script>
+
+{% endblock %}

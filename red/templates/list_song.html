@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+  <div class="container mt-5">
+    <h1 class="fw-bold">Daftar Lagu pada {{ album_title }}</h1>
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th scope="col">Judul</th>
+          <th scope="col">Durasi</th>
+          <th scope="col">Total Play</th>
+          <th scope="col">Total Download</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for song in songs %}
+          <tr>
+            <td>{{ song.1 }}</td>
+            <td>{{ song.2 }}</td>
+            <td>{{ song.3 }}</td>
+            <td>{{ song.4 }}</td>
+            <td>
+              {% comment %} TODO: Route to R Play Song {% endcomment %}
+              <a href="/green/song_detail/{{ song.0 }}" class="btn btn-primary btn-sm">Lihat Detail</a>
+              <a href="/red/delete_lagu/{{ id_album }}/{{ song.0 }}" class="btn btn-danger btn-sm">Hapus</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

@@ -1,0 +1,22 @@
+html, body {
+    height: 100%; /* Ensure the html and body elements take up the full viewport height */
+    margin: 0;   /* Remove default margin */
+    padding: 0;  /* Remove default padding */
+}
+
+#hero-outer {
+    min-height: 100vh; /* Set the minimum height of the outer hero element to full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center the content vertically */
+}
+
+.container {
+    flex: 1; /* Allows the container to expand and fill available space in the flex container */
+}
+
+@media (max-width: 768px) {
+    #hero-outer {
+        min-height: calc(100vh - 56px); /* Adjust 56px based on your actual mobile header/footer size */
+    }
+}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+<body class="d-flex flex-column bg-light" style="height: 100%;">
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card mt-5">
+                    <div class="card-header bg-success text-light text-center">
+                        <h3 class="card-title">Episode List</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Judul Episode</th>
+                                    <th scope="col">Deskripsi</th>
+                                    <th scope="col">Durasi</th>
+                                    <th scope="col">Tanggal</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                 {% for i in episode %}
+                                <tr>
+                                  <td>{{i.1}}</td>  
+                                  <td>{{i.2}}</td>  
+                                  <td>{{i.3}}</td>
+                                  <td>{{i.4}}</td>
+                                  <td><form action="{% url 'biru:delete_episode' episode_id=i.0 podcast_id=podcast_id %}"  method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Hapus</button>
+                                    </form></td> 
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+
+{% endblock %}
+{% block content %}
+  <div class="container mt-5">
+    <h1 class="fw-bold">Daftar Royalti</h1>
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th scope="col">Judul Lagu</th>
+          <th scope="col">Judul Album</th>
+          <th scope="col">Total Play</th>
+          <th scope="col">Total Download</th>
+          <th scope="col">Total Royalti Didapat</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for royalty in royalties %}
+          <tr>
+            <td>{{ royalty.0 }}</td>
+            <td>{{ royalty.1 }}</td>
+            <td>{{ royalty.2 }}</td>
+            <td>{{ royalty.3 }}</td>
+            <td>{{ royalty.4 }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

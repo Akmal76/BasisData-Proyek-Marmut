@@ -25,6 +25,8 @@ SECRET_KEY = 'django-insecure-bf*o_og!p@2b%-f)3qg8m*_1ia^^4_z^gma2lawm-%-qpu7x1s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# APPEND_SLASH=False
+
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -37,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'yellow',
+    'red',
+    'biru',
+    'green',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +81,12 @@ WSGI_APPLICATION = 'marmut.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres',
+        'USER': 'postgres.xzslcwqyjbitncllwkwn',
+        'PASSWORD': 'basdatekelompok5',
+        'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',
+        'PORT': '5432',
     }
 }
 

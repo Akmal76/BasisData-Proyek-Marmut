@@ -1,12 +1,26 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
+{% load static %}
 
+{% block meta %}
+
+{% endblock %}
 {% block content %}
-
-<h1>Shopping List Page</h1>
-
-<h5>Name: </h5>
-<p>Pak Bepe</p> <!-- Ubahlah sesuai dengan nama kamu -->
-<h5>Class: </h5>
-<p>PBP A</p> <!-- Ubahlah sesuai dengan kelas kamu -->
-
+  <header id="hero-outer" class="p-4 rounded-3">
+    <div id="hero-inner" class="container">
+      <h1 class="display-4 fw-bold">🐹 Marmut - 5 - E 🎵</h1>
+      <p class="col-md-8 lead">Dengarkan musik dan podcast dimana saja dan kapan saja! ✨</p>
+      <figure>
+        <blockquote class="blockquote">
+          <p>Setiap nada membuka dunia, setiap podcast membuka pikiran.</p>
+        </blockquote>
+        <figcaption class="blockquote-footer">
+          <cite title="Source Title">Anonymous</cite>
+        </figcaption>
+      </figure>
+      {% if request.session.roles|length == 0 %}
+        <a href="/login" class="btn btn-primary m-2">Login</a>
+        <a href="/register" class="btn btn-primary m-2">Register</a>
+      {% endif %}
+    </div>
+  </header>
 {% endblock %}
