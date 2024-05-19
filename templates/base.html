@@ -52,14 +52,18 @@
       function setupNavbar() {
         let links = []
         
-        console.log(isLoggedIn)
-        
         if (isLoggedIn) {
 
           links.push('<li class="nav-item"><a class="nav-link" href="/dashboard/">Dashboard</a></li>')
-          links.push('<li class="nav-item"><a class="nav-link" href="#">Chart</a></li>')
-          links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Playlist</a></li>')
-      
+          
+          if (role.includes('Pengguna Biasa') || role.includes('Podcaster') || role.includes('Artist') || role.includes('Songwriter')) {
+            links.push('<li class="nav-item"><a class="nav-link" href="#">Chart</a></li>')
+          }
+
+          if (role.includes('Pengguna Biasa') || role.includes('Podcaster') || role.includes('Artist') || role.includes('Songwriter')) {
+            links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Playlist</a></li>')
+          }
+
           if (isPremium) {
             links.push('<li class="nav-item"><a class="nav-link" href="#">Langganan Paket</a></li>');
           }
@@ -78,14 +82,18 @@
           if (isPremium) {
             links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Downloaded Songs</a></li>');
           }
-          links.push(
-            `<li class="nav-item">
-              <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Cari" aria-label="Search" name="q">
-                <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
-              </form>
-            </li>`
-          )
+
+          if (role.includes('Pengguna Biasa') || role.includes('Podcaster') || role.includes('Artist') || role.includes('Songwriter')) {
+            links.push(
+              `<li class="nav-item">
+                <form class="d-flex">
+                  <input class="form-control me-2" type="search" placeholder="Cari" aria-label="Search" name="q">
+                  <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
+                </form>
+              </li>`
+            )
+            }
+            
           links.push('<li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>')
         } else {
           links.push('<li class="nav-item"><a class="nav-link" href="/login">Login</a></li>')
