@@ -21,6 +21,10 @@
         top: 0;
         width: 100%;
       }
+      .search-container {
+            display: flex;
+            align-items: center;
+        }
     </style>
   </head>
 
@@ -64,8 +68,8 @@
             links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Playlist</a></li>')
           }
 
-          if (isPremium) {
-            links.push('<li class="nav-item"><a class="nav-link" href="#">Langganan Paket</a></li>');
+          if (!isPremium && (role.includes('Pengguna Biasa') || role.includes('Podcaster') || role.includes('Artist') || role.includes('Songwriter'))) {
+            links.push('<li class="nav-item"><a class="nav-link" href="/yellow/langganan_paket">Langganan Paket</a></li>');
           }
           if (role.includes('Podcaster')) {
             links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Podcast</a></li>');
@@ -80,14 +84,14 @@
             links.push('<li class="nav-item"><a class="nav-link" href="/red/list_royalti">Cek Royalti</a></li>');
           }
           if (isPremium) {
-            links.push('<li class="nav-item"><a class="nav-link" href="#">Kelola Downloaded Songs</a></li>');
+            links.push('<li class="nav-item"><a class="nav-link" href="/yellow/downloaded">Kelola Downloaded Songs</a></li>');
           }
 
           if (role.includes('Pengguna Biasa') || role.includes('Podcaster') || role.includes('Artist') || role.includes('Songwriter')) {
             links.push(
               `<li class="nav-item">
-                <form class="d-flex">
-                  <input class="form-control me-2" type="search" placeholder="Cari" aria-label="Search" name="q">
+                <form action="{% url 'yellow:search' %}" class="d-flex search-container">
+                  <input class="form-control me-2" type="text" name="query" placeholder="Cari" aria-label="Search" name="q">
                   <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
                 </form>
               </li>`

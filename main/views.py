@@ -200,8 +200,6 @@ def register(request):
         role = request.POST.getlist('role')
         kontak = request.POST.get('kontak')
 
-        print(role)
-
         with connection.cursor() as cursor:
             try:
                 id_pemilik_hak_cipta = uuid.uuid4()
